@@ -1,7 +1,45 @@
 menu = {}
 
+menu.items = {
+    {
+        title = "NEW GAME",
+        action = function()
+            state.switch(start)
+        end,
+    },
+
+    {
+        title = "CONTINUE",
+        action = function()
+            state.switch(continue)
+        end,
+    },
+
+    {
+        title = "OPTIONS",
+        action = function()
+            state.switch(options)
+        end,
+    },
+
+    {
+        title = "QUIT",
+        action = function()
+            love.event.quit()
+        end,
+    },
+}
+
+menu.buttons = {}
+
+function menu:init()
+    for i, item in pairs(self.items) do
+        table.insert(self.buttons, Button:new(item.title, 25, 50*(i-1) + 100, nil, nil, font[32], item.action))
+    end
+end
+
 function menu:enter()
-    
+
 end
 
 function menu:update(dt)
@@ -9,15 +47,17 @@ function menu:update(dt)
 end
 
 function menu:keyreleased(key, code)
-    if key == 'return' then
-        state.switch(game)
+
+end
+
+function menu:mousereleased(button, x, y)
+    for k, button in pairs(self.buttons) do
+        if button:hover() then button:activated() end
     end
 end
 
 function menu:draw()
-    local text = "> ENTER <"
-    local x = love.window.getWidth()/2 - fontBold[48]:getWidth(text)/2
-    local y = love.window.getHeight()/2
-    love.graphics.setFont(fontBold[48])
-    love.graphics.print(text, x, y)
+    for i, button in pairs(self.buttons) do
+        button:draw()
+    end
 end

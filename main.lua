@@ -9,6 +9,13 @@ require 'libs.util'
 -- gamestates
 require 'states.menu'
 require 'states.game'
+require 'states.start'
+require 'states.continue'
+require 'states.options'
+
+-- entities
+require 'entities.ui.button'
+require 'entities.ui.input'
 
 function love.load()
 	love.window.setTitle(config.windowTitle)
@@ -17,6 +24,8 @@ function love.load()
     love.graphics.setFont(font[14])
 
     math.randomseed(os.time()/10)
+
+    love.keyboard.setKeyRepeat(true)
 
     state.registerEvents()
     state.switch(menu)
