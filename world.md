@@ -1,8 +1,8 @@
 Timeline
 ========
 
-- 2500.1.1 Present Day
-- 2339.4.10 First successful test of a FTL drive
+- 1.1.2500 Present Day
+- 4.10.2339 First successful test of a FTL drive
 
 Factions
 ========
