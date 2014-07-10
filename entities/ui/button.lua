@@ -33,6 +33,10 @@ function Button:draw()
         love.graphics.setColor(self.fg)
     end
 
+    if self:hover() and love.mouse.isDown('l') then
+        self.activated()
+    end
+
     local x = self.x + self.width/2 - self.font:getWidth(self.text)/2 + self.translateX
     local y = self.y + self.height/2 - self.font:getHeight(self.text)/2
     love.graphics.setFont(self.font)

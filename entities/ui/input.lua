@@ -18,10 +18,16 @@ function Input:initialize(x, y, w, h, fontType, align)
 
     self.caretTimer = 0
     self.textLimit = math.huge
+    self.singleWord = false
 end
 
 function Input:textinput(text)
     if self.selected and self.text:len() ~= self.textLimit then
+        -- if input can only be a single word, remove spaces
+        if self.singleWord then
+            text = text:gsub("%s+", "")
+        end
+
         self.text = self.text .. text
     end
 end
@@ -95,7 +101,7 @@ function Input:draw()
 
         love.graphics.setColor(255, 255, 255, alpha)
         love.graphics.line(
-            x + self.font:getWidth(self.text)+10, y+15,
+            x + self.font:getWidth(self.text)+10, y+5,
             x + self.font:getWidth(self.text)+10, y+self.font:getHeight(self.text)-5
         )
     end
