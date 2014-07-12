@@ -18,6 +18,28 @@ function start:enter()
 
     self.pilotMale = Button:new("MALE", 70, 250, nil, nil, font[28], function() self.pilotGender = "male" end)
     self.pilotFemale = Button:new("FEMALE", self.pilotMale.width+150, 250, nil, nil, font[28], function() self.pilotGender = "female" end)
+
+    self.completeForm = Button:new("COMPLETE FORM >", 25, love.window.getHeight()-100, nil, nil, font[28], function() self:continueToGame() end)
+end
+
+function start:validateForm()
+    local firstInput = self.pilotFirstInput.text:len() > 1
+    local lastInput = self.pilotLastInput.text:len() > 1
+    local gender = self.pilotGender == "male" or self.pilotGender == "female"
+    local required = firstInput and lastInput and gender
+    return required
+end
+
+function start:continueToGame()
+    if self:validateForm() then
+        state.switch(game)
+    else
+        fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-150, {255, 0, 0}) 
+    end
+end
+
+function start:leave()
+    fx.reset()
 end
 
 function start:update(dt)
@@ -62,4 +84,6 @@ function start:draw()
     if self.pilotGender == "female" then
         love.graphics.line(self.pilotFemale.x-40, self.pilotFemale.y+10, self.pilotFemale.x-10, self.pilotFemale.y+40)
     end
+
+    self.completeForm:draw()
 end
