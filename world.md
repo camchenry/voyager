@@ -9,8 +9,9 @@ Factions
 - Terran Federation
     - Primary faction, mostly human, indifferent to other races
 - Helix Corporation
-    - Human splinter faction, pro-human, hates other races
+    - Human splinter group, pro-human, hates other races
     - Advocates of human genetic modification, which is illegal in the federation
+    - Operates in neutral space, away from Federation territory
 - Galactic Shipping
     - Neutral
     - Ships all interstellar cargo
@@ -19,6 +20,6 @@ Factions
 Locations
 =========
 - Earth
-    - Since the migration of almost all of Earth's industry to the Moon it has become a clean and enjoyable place to live. Over 150 billion people now live in the many skyscrapers and buildings that are scattered all over the ecumenopolis.
+    - Since the migration of almost all of Earth's industry to the Moon it has become a clean and enjoyable place to live. Over 150 billion people now live in the many skyscrapers and buildings that are scattered over the entire surface.
 - Luna (the Moon)
-    - What was once a large, bustling human colony inhabited by over a billion people is now the most profitable industrial megalopolis in the galaxy. It contains all of the industries, factories, and shipyards that were previously located on Earth.
+    - What was once a large, bustling human colony inhabited by over a billion people is now the most profitable industrial metropolis in the galaxy. It contains all of the industries, factories, and shipyards that were previously located on Earth.

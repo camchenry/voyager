@@ -6,7 +6,7 @@ start.items = {
 
 function start:enter()
     self.pilotFirstInput = Input:new(25, 100, 400, nil, font[28])
-    self.pilotLastInput = Input:new(self.pilotFirstInput.x+self.pilotFirstInput.width, self.pilotFirstInput.y, self.pilotFirstInput.width, nil, font[28])
+    self.pilotLastInput = Input:new(25, self.pilotFirstInput.y+75, self.pilotFirstInput.width, nil, font[28])
 
     self.pilotFirstInput.textLimit = 25
     self.pilotLastInput.textLimit = 25
@@ -16,10 +16,10 @@ function start:enter()
     self.pilotGender = nil
 
 
-    self.pilotMale = Button:new("MALE", 70, 250, nil, nil, font[28], function() self.pilotGender = "male" end)
-    self.pilotFemale = Button:new("FEMALE", self.pilotMale.width+150, 250, nil, nil, font[28], function() self.pilotGender = "female" end)
+    self.pilotMale = Button:new("MALE", 70, 280, nil, nil, font[28], function() self.pilotGender = "male" end)
+    self.pilotFemale = Button:new("FEMALE", self.pilotMale.width+150, 280, nil, nil, font[28], function() self.pilotGender = "female" end)
 
-    self.completeForm = Button:new("COMPLETE FORM >", 25, love.window.getHeight()-100, nil, nil, font[28], function() self:continueToGame() end)
+    self.completeForm = Button:new("COMPLETE FORM >", 25, love.window.getHeight()-80, nil, nil, font[28], function() self:continueToGame() end)
 end
 
 function start:validateForm()
@@ -32,10 +32,18 @@ end
 
 function start:continueToGame()
     if self:validateForm() then
+        self:initializePlayer()
         state.switch(game)
     else
-        fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-150, {255, 0, 0}) 
+        fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 
     end
+end
+
+function start:initializePlayer()
+    local first = self.pilotFirstInput.text
+    local last = self.pilotLastInput.text
+    local gender = self.pilotGender
+    the.player = Pilot:new(first, last, gender)
 end
 
 function start:leave()
@@ -61,16 +69,16 @@ function start:draw()
     love.graphics.setFont(fontBold[36])
     love.graphics.print("NEW PILOT FORM 36C-DL4 ", 25, 10)
 
-    --love.graphics.setLineWidth(2)
-    --love.graphics.rectangle("line", 15, 80, love.window.getWidth()-30, love.window.getHeight()-160)
+    -- first and last name inputs
 
     self.pilotFirstInput:draw()
     self.pilotLastInput:draw()
 
-    love.graphics.setFont(fontLight[24])
+    love.graphics.setFont(fontLight[18])
     love.graphics.print("FIRST NAME", self.pilotFirstInput.x, self.pilotFirstInput.y+40)
-    love.graphics.print("LAST NAME", self.pilotLastInput.x, self.pilotFirstInput.y+40)
+    love.graphics.print("LAST NAME", self.pilotLastInput.x, self.pilotLastInput.y+40)
 
+    -- male and female buttons
     self.pilotMale:draw()
     self.pilotFemale:draw()
 
@@ -84,6 +92,13 @@ function start:draw()
     if self.pilotGender == "female" then
         love.graphics.line(self.pilotFemale.x-40, self.pilotFemale.y+10, self.pilotFemale.x-10, self.pilotFemale.y+40)
     end
+
+    -- trade contract selection
+
+    love.graphics.setLineWidth(2)
+    love.graphics.rectangle("line", 25, 370, 450, 270)
+
+    love.graphics.print("NO TRADE CONTRACTS FOUND", 35, 375)
 
     self.completeForm:draw()
 end

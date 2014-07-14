@@ -16,6 +16,9 @@ require 'states.options'
 -- entities
 require 'entities.ui.button'
 require 'entities.ui.input'
+require 'entities.pilot'
+require 'entities.system'
+require 'entities.ship'
 
 function love.load()
 	love.window.setTitle(config.windowTitle)
@@ -26,6 +29,12 @@ function love.load()
     math.randomseed(os.time()/10)
 
     love.keyboard.setKeyRepeat(true)
+
+    --love.window.setMode(1024, 768, {fullscreen = false})
+
+    the = {}
+    the.player = nil
+    the.system = nil
 
     state.registerEvents()
     state.switch(menu)

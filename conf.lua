@@ -1,9 +1,9 @@
 function love.conf(t)
-    t.identity = nil                   -- The name of the save directory (string)
+    t.identity = 'voyager'                   -- The name of the save directory (string)
     t.version = "0.9.1"                -- The LÖVE version this game was made for (string)
     t.console = false                  -- Attach a console (boolean, Windows only)
 
-    t.window.title = "Untitled"        -- The window title (string)
+    t.window.title = "Voyager"        -- The window title (string)
     t.window.icon = nil                -- Filepath to an image to use as the window's icon (string)
     t.window.width = 1024              -- The window width (number)
     t.window.height = 768              -- The window height (number)
@@ -12,7 +12,7 @@ function love.conf(t)
     t.window.minwidth = 1              -- Minimum window width if the window is resizable (number)
     t.window.minheight = 1             -- Minimum window height if the window is resizable (number)
     t.window.fullscreen = false        -- Enable fullscreen (boolean)
-    t.window.fullscreentype = "normal" -- Standard fullscreen or desktop fullscreen mode (string)
+    t.window.fullscreentype = "desktop" -- Standard fullscreen or desktop fullscreen mode (string)
     t.window.vsync = true              -- Enable vertical sync (boolean)
     t.window.fsaa = 4                  -- The number of samples to use with multi-sampled antialiasing (number)
     t.window.display = 1               -- Index of the monitor to show the window in (number)
@@ -33,8 +33,8 @@ function love.conf(t)
 end
 
 config = {
-    gameTitle = "Untitled",
-    windowTitle = "Untitled",
+    gameTitle = "Voyager",
+    windowTitle = "Voyager",
     windowIcon = 'img/icon.png',
 
     -- see: http://love2d.org/wiki/love.graphics.setDefaultFilter
