@@ -7,4 +7,6 @@ function Pilot:initialize(first, last, gender)
     self.lastName = last
     self.name = first .. " " .. last
     self.gender = gender
+
+    self.ship = Ship:new()
 end

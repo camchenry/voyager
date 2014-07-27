@@ -1,9 +1,11 @@
--- This contains all the objects for each (active) ship in the game
+-- This contains all the variables for each (active) ship in the game
 -- e.g. physics bodies and fixtures, and ship specifications (crew, armor, etc.)
 
 Ship = class("Ship")
 
 function Ship:initialize(world)
+    if world == nil and the.system.world ~= nil then world = the.system.world end
+
     self.width = 100
     self.height = 300
 
@@ -14,7 +16,17 @@ function Ship:initialize(world)
 end
 
 function Ship:update(dt)
-    self.body:applyForce(50, 10)
+    if love.keyboard.isDown("w") then
+        self.body:applyForce(0, -100)
+    elseif love.keyboard.isDown("s") then
+        self.body:applyForce(0, 100)
+    end
+
+    if love.keyboard.isDown("a") then
+        self.body:applyForce(-100, 0)
+    elseif love.keyboard.isDown("d") then
+        self.body:applyForce(100, 0)
+    end
 end
 
 function Ship:draw()
