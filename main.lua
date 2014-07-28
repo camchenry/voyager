@@ -24,6 +24,7 @@ require 'entities.ui.input'
 require 'entities.pilot'
 require 'entities.system'
 require 'entities.ship'
+require 'entities.planet'
 
 function love.load()
 	love.window.setTitle(config.windowTitle)
@@ -42,6 +43,8 @@ function love.load()
     the = {}
     the.player = nil
     the.system = nil
+
+    game:loadSystems()
 
     state.registerEvents()
     state.switch(gameOnline)
