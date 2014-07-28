@@ -1,0 +1,36 @@
+Date: July 18, 2014
+
+Time: 30 Min
+Data Received: ~0.0615MB
+Data Sent:	~0.0611MB
+Description: Test of data sent by enet by default (measured from client perspective)
+	- Only one client connected
+
+	
+	
+Date: July 23, 2014
+
+Data size of sending messages in different formats
+Format: Normal
+Interval Packet Size: 18B
+Characters: 1; 21B
+Characters: 2; 22B
+Characters: 3; 23B
+Characters: 10; 30B
+Description: It would appear that the default packet size is 20B, +1B for each character sent
+	- This seems to be true for all numbers of characters, regardless of character pattern or type
+	
+Format: order-2 PPM range coder
+Interval Packet Size: 18B
+Characters: 10 (all !); 26B
+Characters: 10 (all A); 25B
+Characters: 10 (all different); 30B
+Characters: 10 (ABABABABAB); 27B
+Description: This format seems to notice patterns in messages and decreases packet size when it can
+	- In cases where all characters are different, it does not seem to add any packet size, and is the same as the normal format	
+
+Conclusion: I see no drawbacks to using the order-2 PPM range coder format.
+	- It could take more processing power for both the client and server at a high frequency, but I have no evidence to show it would be noticable
+	- There do not seem to be any issues with packets in this format. They arrive as they were sent
+	- Note: The format must be active for both the server and client in order for them to communicate
+	- Note: Byte sizes were the same sent and received. This was from the client perspective

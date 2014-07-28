@@ -4,7 +4,8 @@ menu.items = {
     {
         title = "NEW GAME",
         action = function()
-            state.switch(start)
+            --state.switch(start)
+			state.switch(gameOnline) -- Temp
         end,
     },
 
