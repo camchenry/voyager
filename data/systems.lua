@@ -14,8 +14,8 @@ STAR_SYSTEMS["Sol"] = {
             class = "Planet", 
             data = {
                 name  = "Mars", 
-                x = 200, 
-                y = 200
+                x = 600, 
+                y = 400
             }
         },
     },

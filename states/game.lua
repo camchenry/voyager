@@ -71,8 +71,10 @@ function game:draw()
 
     love.graphics.print(the.system.name)
 
-    local x = -the.player.ship.body:getX() + love.window.getWidth()/2 - the.player.ship.width/2
-    local y = -the.player.ship.body:getY() + love.window.getHeight()/2 - the.player.ship.height/2
+    love.graphics.print(the.system.world:getBodyCount(), 0, 50)
+
+    local x = -the.player.ship.body:getX() + love.window.getWidth()/2
+    local y = -the.player.ship.body:getY() + love.window.getHeight()/2
     love.graphics.translate(x, y)
 
     the.system:draw()

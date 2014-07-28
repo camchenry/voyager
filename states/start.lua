@@ -33,6 +33,7 @@ end
 function start:continueToGame()
     if self:validateForm() then
         self:initializePlayer()
+        fx.reset()
         state.switch(game)
     else
         fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 

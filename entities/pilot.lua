@@ -8,5 +8,5 @@ function Pilot:initialize(first, last, gender)
     self.name = first .. " " .. last
     self.gender = gender
 
-    self.ship = Ship:new()
+    self.ship = Ship:new(the.system.world)
 end
