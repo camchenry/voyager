@@ -45,9 +45,11 @@ function love.load()
     the.system = nil
 
     game:loadSystems()
+	gameOnline:loadSystems()
 
     state.registerEvents()
-    state.switch(gameOnline)
+    --state.switch(gameOnline)
+	state.switch(menu)
 end
 
 function love.update(dt)

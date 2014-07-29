@@ -33,7 +33,8 @@ end
 function start:continueToGame()
     if self:validateForm() then
         self:initializePlayer()
-        state.switch(game)
+        --state.switch(game)
+		state.switch(gameOnline)
     else
         fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 
     end
@@ -43,7 +44,8 @@ function start:initializePlayer()
     local first = self.pilotFirstInput.text
     local last = self.pilotLastInput.text
     local gender = self.pilotGender
-    the.system = game.systems["Sol"]
+    --the.system = game.systems["Sol"]
+	the.system = gameOnline.systems["Sol"]
     the.player = Pilot:new(first, last, gender)
 end
 

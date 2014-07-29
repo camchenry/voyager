@@ -58,6 +58,7 @@ function game:update(dt)
 			local index = event.peer:index()
 			self.entities[index] = {}
 			event.peer:send("Welcometoserv1")
+			event.peer:send('cn|' .. index)
         end
 		
         -- received data from a client
@@ -72,24 +73,31 @@ function game:update(dt)
             --end
 			
 			local index = event.peer:index()
-			if string.find(event.data, 'nm|') then -- True if it is name data 
+			if string.find(event.data, 'nm|') == 1 then -- True if it is name data 
 				self.entities[index].name = string.gsub(event.data, 'nm|', '')
-			else
-				local name = self.entities[index].name or 'User_'..index
-				self.host:broadcast(name .. ': ' .. event.data)
+			elseif string.find(event.data, 'tx|') == 1 then -- True if a message
+				local name = self.entities[index].name or 'User_' .. index
+				local str = string.gsub(event.data, 'tx|', '')
+				self.host:broadcast(name .. ': ' .. str)
+			elseif string.find(event.data, 'cp|') == 1 then -- True if a player position
+				self.host:broadcast(event.data)
 			end
         end
 		
 		-- called when a client disconnects from the server
 		if event.type == 'disconnect' then
-		
+			local index = event.peer:index()
+			self.entities[index] = nil
 		end
+		
+		--[[
 		
         -- every 1ms, send out an up-to-date entity list
         if self.timer > 0.001 then -- This should be more like 30 ms
             self.timer = 0
             --host:broadcast(dump(game.entities))
         end
+		]]
     end
 end
 
@@ -97,13 +105,22 @@ function game:draw()
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.setFont(font[24])
 	
-    love.graphics.print("Running server on "..server.ip..":"..server.port.."\nServer Time: "..math.floor(self.timer), 5, 5)
+    love.graphics.print('Running server on ' .. server.ip .. ':' .. server.port, 5, 5)
+	love.graphics.print('Server Time: '..math.floor(self.timer), 5, 25)
 
     if self.lastEvent then
         local msg = "Last message: "..tostring(self.lastEvent.data).." from "..tostring(self.peer:index())
         love.graphics.print(msg, 5, 65)
     end
 
+	
+	for i = 1, 6 do -- checks through all possible number of players
+		local entity = self.entities[i] or {}
+		if entity.name then
+			love.graphics.print(entity.name, 5, 105 + i*22)
+		end
+	end
+	
 	--[[
     love.graphics.print("Entities: "..tostring(#game.entities), 5, 35)
 	
