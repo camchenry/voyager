@@ -13,7 +13,7 @@ function game:loadSystems()
     local starSystems = require 'data.systems'
 
     for systemName, systemData in pairs(starSystems) do
-        local system = StarSystem:new(systemName)
+        local system = StarSystem:new(systemName, systemData.x, systemData.y)
 
         -- add all objects
         for k, object in pairs(systemData.objects) do
@@ -63,7 +63,9 @@ function game:update(dt)
 end
 
 function game:keypressed(key, isrepeat)
-
+    if key == "m" then
+        state.switch(starmap)
+    end
 end
 
 function game:draw()
@@ -71,7 +73,10 @@ function game:draw()
 
     love.graphics.print(the.system.name)
 
-    love.graphics.print(the.system.world:getBodyCount(), 0, 50)
+    local x, y = the.player.ship.body:getLinearVelocity()
+    local normalized = math.sqrt(x^2 + y^2)
+    love.graphics.print(x.." "..y, 0, 50)
+    love.graphics.print(normalized, 0, 100)
 
     local x = -the.player.ship.body:getX() + love.window.getWidth()/2
     local y = -the.player.ship.body:getY() + love.window.getHeight()/2

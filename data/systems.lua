@@ -1,6 +1,9 @@
 local STAR_SYSTEMS = {}
 
 STAR_SYSTEMS["Sol"] = {
+    x = 0,
+    y = 0,
+
     objects = {
         {
             class = "Planet", 
@@ -19,6 +22,20 @@ STAR_SYSTEMS["Sol"] = {
             }
         },
     },
+}
+
+STAR_SYSTEMS["Proxima Centauri"] = {
+    x = 250,
+    y = -200,
+
+    objects = {},
+}
+
+STAR_SYSTEMS["Alpha Centauri"] = {
+    x = -100,
+    y = -250,
+
+    objects = {}
 }
 
 return STAR_SYSTEMS

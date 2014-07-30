@@ -2,8 +2,10 @@
 
 StarSystem = class("StarSystem")
 
-function StarSystem:initialize(name)
+function StarSystem:initialize(name, x, y)
     self.name = name
+    self.x = x
+    self.y = y
     self.entities = {}
     self.objects = {}
 

@@ -94,13 +94,6 @@ function start:draw()
     if self.pilotGender == "female" then
         love.graphics.line(self.pilotFemale.x-40, self.pilotFemale.y+10, self.pilotFemale.x-10, self.pilotFemale.y+40)
     end
-
-    -- trade contract selection
-
-    love.graphics.setLineWidth(2)
-    love.graphics.rectangle("line", 25, 370, 450, 270)
-
-    love.graphics.print("NO TRADE CONTRACTS FOUND", 35, 375)
-
+    
     self.completeForm:draw()
 end

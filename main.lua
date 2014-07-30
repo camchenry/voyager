@@ -12,6 +12,7 @@ require 'states.game'
 require 'states.start'
 require 'states.continue'
 require 'states.options'
+require 'states.starmap'
 
 -- entities
 require 'entities.ui.button'
@@ -31,7 +32,7 @@ function love.load()
 
     love.keyboard.setKeyRepeat(true)
 
-    --love.window.setMode(1024, 768, {fullscreen = false})
+    love.window.setMode(1024, 768, {fullscreen = true})
 
     the = {}
     the.player = nil

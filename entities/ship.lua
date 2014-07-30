@@ -16,9 +16,11 @@ function Ship:initialize(world)
 
     -- physics properties
     self.mass = 4
-    self.angularDamping = 15
-    self.inertia = 15
-    self.speed = 135
+    self.torque = 250
+    self.angularDamping = 20
+    self.inertia = 10
+    self.speed = 250
+    self.maxSpeed = 300
 
     self.body:setMass(self.mass)
     self.body:setAngularDamping(self.angularDamping)
@@ -26,19 +28,19 @@ function Ship:initialize(world)
 end
 
 function Ship:update(dt)
-    local x = self.speed*math.cos(self.body:getAngle())
-    local y = self.speed*math.sin(self.body:getAngle())
+    local dx = self.speed*math.cos(self.body:getAngle())
+    local dy = self.speed*math.sin(self.body:getAngle())
 
     if love.keyboard.isDown("w") then
-        self.body:applyForce(x, y)
+        self.body:applyForce(dx, dy)
     elseif love.keyboard.isDown("s") then
-        self.body:applyForce(-x, -y)
+        self.body:applyForce(-dx, -dy)
     end
 
     if love.keyboard.isDown("a") then
-        self.body:applyTorque(-250)
+        self.body:applyTorque(-self.torque)
     elseif love.keyboard.isDown("d") then
-        self.body:applyTorque(250)
+        self.body:applyTorque(self.torque)
     end
 end
 
