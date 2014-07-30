@@ -17,6 +17,7 @@ require 'states.starmap'
 -- entities
 require 'entities.ui.button'
 require 'entities.ui.input'
+require 'entities.ui.checkbox'
 require 'entities.pilot'
 require 'entities.system'
 require 'entities.ship'
