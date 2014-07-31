@@ -38,8 +38,6 @@ function love.load()
     the.player = nil
     the.system = nil
 
-    game:loadSystems()
-
     state.registerEvents()
     state.switch(menu)
 end

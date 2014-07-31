@@ -9,4 +9,25 @@ function Pilot:initialize(first, last, gender)
     self.gender = gender
 
     self.ship = Ship:new(the.system.world)
+    self.location = "Sol"
+end
+
+function Pilot:jump()
+    local system = starmap.selectedSystem
+    if system == nil then return false end
+
+    assert(system ~= self.location)
+
+    self.ship.jumping = true
+
+    -- system is selected, time to jump
+    self.ship.body:setLinearVelocity(0, 0)
+
+    fx.flash(0.5, {255, 255, 255})
+
+    if the.system:load(system) then
+        self.location = system
+    end
+
+    self.ship.jumping = false
 end

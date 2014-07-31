@@ -44,7 +44,7 @@ function start:initializePlayer()
     local first = self.pilotFirstInput.text
     local last = self.pilotLastInput.text
     local gender = self.pilotGender
-    the.system = game.systems["Sol"]
+    the.system = StarSystem:new("bootstrap")
     the.player = Pilot:new(first, last, gender)
 end
 

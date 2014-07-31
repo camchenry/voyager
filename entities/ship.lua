@@ -22,19 +22,18 @@ function Ship:initialize(world)
     self.speed = 250
     self.maxSpeed = 300
 
+    self.jumping = false
+
     self.body:setMass(self.mass)
     self.body:setAngularDamping(self.angularDamping)
     self.body:setInertia(self.inertia)
 end
 
 function Ship:update(dt)
-    local dx = self.speed*math.cos(self.body:getAngle())
-    local dy = self.speed*math.sin(self.body:getAngle())
-
     if love.keyboard.isDown("w") then
-        self.body:applyForce(dx, dy)
+        self:thrustPrograde()
     elseif love.keyboard.isDown("s") then
-        self.body:applyForce(-dx, -dy)
+        self:thrustRetrograde()
     end
 
     if love.keyboard.isDown("a") then
@@ -42,6 +41,20 @@ function Ship:update(dt)
     elseif love.keyboard.isDown("d") then
         self.body:applyTorque(self.torque)
     end
+end
+
+function Ship:thrustPrograde()
+    local dx = self.speed*math.cos(self.body:getAngle())
+    local dy = self.speed*math.sin(self.body:getAngle())
+
+    self.body:applyForce(dx, dy)
+end
+
+function Ship:thrustRetrograde()
+    local dx = self.speed*math.cos(self.body:getAngle())
+    local dy = self.speed*math.sin(self.body:getAngle())
+
+    self.body:applyForce(-dx, -dy)
 end
 
 function Ship:draw()

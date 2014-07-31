@@ -20,6 +20,32 @@ function StarSystem:addObject(object)
     table.insert(self.objects, object)
 end
 
+function StarSystem:load(name)
+    local starSystems = require 'data.systems'
+
+    assert(starSystems[name] ~= nil, 'tried to load invalid star system: "'..name..'"')
+
+    local systemData = starSystems[name]
+
+    self.name = name
+    self.objects = {}
+    self.entities = {}
+
+    -- add all objects
+    for k, object in pairs(systemData.objects) do
+        local class = _G[object.class]
+        local newObject = class:new()
+        newObject.name = object.data.name
+        newObject.x = object.data.x
+        newObject.y = object.data.y
+
+        self:addObject(newObject)
+    end
+
+    -- worked fine
+    return true
+end
+
 function StarSystem:update(dt)
     self.world:update(dt)
 

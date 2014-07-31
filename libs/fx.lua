@@ -62,6 +62,7 @@ end
 fx.reset = function()
     tween.reset(fx._fadeID)
     tween.reset(fx._fadeText)
+    tween.resetAll()
     fx._fade = nil
     fx._fadeID = nil
 

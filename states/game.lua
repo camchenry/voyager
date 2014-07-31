@@ -1,13 +1,12 @@
 game = {}
 
 function game:init()
-    the.system = self.systems["Sol"]
-
-    the.system:addEntity(the.player.ship)
+    -- the system will be changed to match whichever system the player is in
+    the.system:load(the.player.location)
 end
 
 -- initialize all star systems and load them into self.systems
-function game:loadSystems()
+--[[function game:loadSystems()
     self.systems = {}
 
     local starSystems = require 'data.systems'
@@ -28,7 +27,7 @@ function game:loadSystems()
 
         self.systems[systemName] = system
     end
-end
+end]]
 
 function game:load(file, ignoreError)
     if ignoreError ~= false then ignoreError = true end
@@ -60,11 +59,17 @@ end
 
 function game:update(dt)
     the.system:update(dt)
+
+    the.player.ship:update(dt)
 end
 
 function game:keypressed(key, isrepeat)
     if key == "m" then
         state.switch(starmap)
+    end
+
+    if key == "j" then
+        the.player:jump()
     end
 end
 
@@ -83,4 +88,6 @@ function game:draw()
     love.graphics.translate(x, y)
 
     the.system:draw()
+
+    the.player.ship:draw()
 end

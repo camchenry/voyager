@@ -28,7 +28,16 @@ STAR_SYSTEMS["Proxima Centauri"] = {
     x = 250,
     y = -200,
 
-    objects = {},
+    objects = {
+        {
+            class = "Planet",
+            data = {
+                name = "Belinov",
+                x = 0,
+                y = 0,
+            }
+        },
+    },
 }
 
 STAR_SYSTEMS["Alpha Centauri"] = {
