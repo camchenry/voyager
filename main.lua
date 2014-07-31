@@ -50,3 +50,9 @@ end
 function love.draw()
     fx.draw()
 end
+
+function love.keypressed(key, isrepeat)
+	if key == 'escape' then
+		love.event.quit()
+	end
+end
