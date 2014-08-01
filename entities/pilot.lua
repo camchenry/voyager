@@ -10,6 +10,7 @@ function Pilot:initialize(first, last, gender)
 
     self.ship = Ship:new(the.system.world)
     self.location = "Sol"
+    self.planet = nil
 end
 
 function Pilot:jump()

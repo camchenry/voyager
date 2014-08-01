@@ -46,6 +46,23 @@ function StarSystem:load(name)
     return true
 end
 
+-- finds closest object to x, y within radius
+function StarSystem:closestObject(x, y, radius)
+    radius = radius or 80
+    local min = math.huge
+    local obj = nil
+
+    for k, object in pairs(self.objects) do
+        local d = math.sqrt((object.x - x)^2 + (object.y - y)^2)
+        if d < min and d <= radius then
+            min = d
+            obj = object
+        end
+    end
+
+    return obj, min
+end
+
 function StarSystem:update(dt)
     self.world:update(dt)
 

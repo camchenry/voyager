@@ -3,31 +3,12 @@ game = {}
 function game:init()
     -- the system will be changed to match whichever system the player is in
     the.system:load(the.player.location)
+
+    self.selectedObject = nil
+
+    self.translateX = 0
+    self.translateY = 0
 end
-
--- initialize all star systems and load them into self.systems
---[[function game:loadSystems()
-    self.systems = {}
-
-    local starSystems = require 'data.systems'
-
-    for systemName, systemData in pairs(starSystems) do
-        local system = StarSystem:new(systemName, systemData.x, systemData.y)
-
-        -- add all objects
-        for k, object in pairs(systemData.objects) do
-            local class = _G[object.class]
-            local newObject = class:new()
-            newObject.name = object.data.name
-            newObject.x = object.data.x
-            newObject.y = object.data.y
-
-            system:addObject(newObject)
-        end
-
-        self.systems[systemName] = system
-    end
-end]]
 
 function game:load(file, ignoreError)
     if ignoreError ~= false then ignoreError = true end
@@ -61,7 +42,11 @@ function game:update(dt)
     the.system:update(dt)
 
     the.player.ship:update(dt)
+
+    self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
+    self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
 end
+
 
 function game:keypressed(key, isrepeat)
     if key == "m" then
@@ -71,23 +56,40 @@ function game:keypressed(key, isrepeat)
     if key == "j" then
         the.player:jump()
     end
+
+    if key == "l" then
+        if self.selectedObject ~= nil then
+            the.player.planet = self.selectedObject
+            self.selectedObject = nil
+            state.switch(landed)
+        end
+    end
+end
+
+function game:mousepressed(x, y, button)
+    if button == "l" then
+        self.selectedObject, self.dist = the.system:closestObject(x-self.translateX, y-self.translateY)
+    end
 end
 
 function game:draw()
     love.graphics.setColor(255, 255, 255)
 
+    -- things that shouldn't be translated
+
     love.graphics.print(the.system.name)
 
-    local x, y = the.player.ship.body:getLinearVelocity()
-    local normalized = math.sqrt(x^2 + y^2)
-    love.graphics.print(x.." "..y, 0, 50)
-    love.graphics.print(normalized, 0, 100)
-
-    local x = -the.player.ship.body:getX() + love.window.getWidth()/2
-    local y = -the.player.ship.body:getY() + love.window.getHeight()/2
-    love.graphics.translate(x, y)
-
+    love.graphics.translate(self.translateX, self.translateY)
+    -- things that should be translated
+    
     the.system:draw()
+
+    -- selected object display
+    if self.selectedObject ~= nil then
+        local obj = self.selectedObject
+
+        love.graphics.rectangle("line", obj.x-obj.width/2-5, obj.y-obj.height/2-5, obj.width+5, obj.height+5)
+    end
 
     the.player.ship:draw()
 end

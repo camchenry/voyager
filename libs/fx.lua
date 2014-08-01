@@ -1,7 +1,7 @@
 
 local fx = {}
 
-wait = function(t, callback, ...) tween(t, {0}, {0}, nil, callback, ...) end
+wait = function(t, callback, ...) return tween(t, {0}, {0}, nil, callback, ...) end
 
 fx._fade = nil
 fx._fadeID = nil
@@ -46,7 +46,7 @@ fx.transition = function(t, to, ...)
     end
 end
 
-fx.fadeText = function(t, delay, text, x, y, color, typeface, easing, callback, ...)
+fx.text = function(delay, text, x, y, color, typeface, easing, callback, ...)
     fx._text = text
     fx._textFont = typeface or font[28]
     fx._textColor = color or {255, 255, 255}
@@ -55,7 +55,7 @@ fx.fadeText = function(t, delay, text, x, y, color, typeface, easing, callback, 
     fx._textAlpha = 255
 
     wait(delay, function(...)
-        fx._textID = tween(t, fx, {_textAlpha = 0}, easing, callback, ...)
+        fx._textAlpha = 0
     end, ...)
 end
 

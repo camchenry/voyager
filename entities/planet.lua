@@ -6,6 +6,10 @@ function Planet:initialize()
     self.name = name
     self.x = 0
     self.y = 0
+
+    self.radius = 50
+    self.width = self.radius*2
+    self.height = self.radius*2
 end
 
 function Planet:canLand(ship)
@@ -22,5 +26,5 @@ end
 
 function Planet:draw()
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", self.x, self.y, 50)
+    love.graphics.circle("fill", self.x, self.y, self.radius)
 end

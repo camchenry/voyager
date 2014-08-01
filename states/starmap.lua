@@ -2,6 +2,12 @@ starmap = {}
 
 function starmap:init()
     self.rawSystemData = require 'data.systems'
+
+    self.translateX = love.window.getWidth()/2
+    self.translateY = love.window.getHeight()/2
+
+    self.mouseX = 0
+    self.mouseY = 0
 end
 
 function starmap:enter()

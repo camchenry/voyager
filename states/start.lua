@@ -36,7 +36,7 @@ function start:continueToGame()
         fx.reset()
         state.switch(game)
     else
-        fx.fadeText(1, 4, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 
+        fx.text(3, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 
     end
 end
 
@@ -44,7 +44,7 @@ function start:initializePlayer()
     local first = self.pilotFirstInput.text
     local last = self.pilotLastInput.text
     local gender = self.pilotGender
-    the.system = StarSystem:new("bootstrap")
+    the.system = StarSystem:new("default")
     the.player = Pilot:new(first, last, gender)
 end
 

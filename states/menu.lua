@@ -8,12 +8,12 @@ menu.items = {
         end,
     },
 
-    {
+    --[[{
         title = "CONTINUE",
         action = function()
             state.switch(continue)
         end,
-    },
+    },]]
 
     {
         title = "OPTIONS",
@@ -50,13 +50,11 @@ function menu:keyreleased(key, code)
 
 end
 
-function menu:mousereleased(button, x, y)
-    for k, button in pairs(self.buttons) do
-        if button:hover() then button:activated() end
-    end
-end
-
 function menu:draw()
+
+    love.graphics.setFont(fontBold[40])
+    love.graphics.print('VOYAGER', 25, 25)
+
     for i, button in pairs(self.buttons) do
         button:draw()
     end

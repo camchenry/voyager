@@ -13,6 +13,7 @@ require 'states.start'
 require 'states.continue'
 require 'states.options'
 require 'states.starmap'
+require 'states.landed'
 
 -- entities
 require 'entities.ui.button'
