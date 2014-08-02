@@ -17,8 +17,9 @@ require 'states.landed'
 
 -- entities
 require 'entities.ui.button'
-require 'entities.ui.input'
 require 'entities.ui.checkbox'
+require 'entities.ui.input'
+require 'entities.ui.list'
 require 'entities.pilot'
 require 'entities.system'
 require 'entities.ship'
