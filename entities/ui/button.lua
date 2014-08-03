@@ -20,6 +20,12 @@ function Button:initialize(text, x, y, w, h, fontSize, activated)
     self.activated = activated or function() end
 end
 
+function Button:mousepressed(x, y, mbutton)
+    if self:hover() and mbutton == "l" then
+        self.activated()
+    end
+end
+
 function Button:draw()
     local r, g, b, a = love.graphics.getColor()
     local oldColor = {r, g, b, a}
@@ -31,10 +37,6 @@ function Button:draw()
         love.graphics.setColor(self.active)
     else
         love.graphics.setColor(self.fg)
-    end
-
-    if self:hover() and love.mouse.isDown('l') then
-        self.activated()
     end
 
     local x = self.x + self.width/2 - self.font:getWidth(self.text)/2 + self.translateX

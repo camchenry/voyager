@@ -46,6 +46,12 @@ function StarSystem:load(name)
     return true
 end
 
+function StarSystem:entered()
+    for comm, price in pairs(tradecenter.commodityPrices) do
+        tradecenter.commodityPrices[comm] = tradecenter.commodityPrices[comm] + math.random(-50, 50)
+    end
+end
+
 -- finds closest object to x, y within radius
 function StarSystem:closestObject(x, y, radius)
     radius = radius or 80

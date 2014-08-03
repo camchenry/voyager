@@ -11,6 +11,8 @@ function Pilot:initialize(first, last, gender)
     self.ship = Ship:new(the.system.world)
     self.location = "Sol"
     self.planet = nil
+
+    self.credits = 25000
 end
 
 function Pilot:jump()
@@ -29,6 +31,8 @@ function Pilot:jump()
     if the.system:load(system) then
         self.location = system
     end
+
+    the.system:entered()
 
     self.ship.jumping = false
 end

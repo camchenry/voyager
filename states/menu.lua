@@ -34,7 +34,7 @@ menu.buttons = {}
 
 function menu:init()
     for i, item in pairs(self.items) do
-        table.insert(self.buttons, Button:new(item.title, 25, 50*(i-1) + 100, nil, nil, font[32], item.action))
+        table.insert(self.buttons, Button:new(item.title, 25, 50*(i-1) + 110, nil, nil, font[32], item.action))
     end
 end
 
@@ -48,6 +48,12 @@ end
 
 function menu:keyreleased(key, code)
 
+end
+
+function menu:mousepressed(x, y, mbutton)
+    for i, button in pairs(self.buttons) do
+        button:mousepressed(x, y, mbutton)
+    end
 end
 
 function menu:draw()

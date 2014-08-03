@@ -14,6 +14,7 @@ require 'states.continue'
 require 'states.options'
 require 'states.starmap'
 require 'states.landed'
+require 'states.tradecenter'
 
 -- entities
 require 'entities.ui.button'

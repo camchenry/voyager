@@ -61,6 +61,12 @@ function start:keypressed(key, isrepeat)
     self.pilotLastInput:keypressed(key, isrepeat)
 end
 
+function start:mousepressed(x, y, mbutton)
+    self.pilotMale:mousepressed(x, y, mbutton)
+    self.pilotFemale:mousepressed(x, y, mbutton)
+    self.completeForm:mousepressed(x, y, mbutton)
+end
+
 function start:textinput(text)
     self.pilotFirstInput:textinput(text)
     self.pilotLastInput:textinput(text)
