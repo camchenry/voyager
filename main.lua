@@ -36,7 +36,10 @@ function love.load()
 
     love.keyboard.setKeyRepeat(true)
 
-    love.window.setMode(1024, 768, {fullscreen = true})
+	local loadedOptions = options:load()
+	if not loadedOptions then
+		love.window.setMode(1024, 768, {fullscreen = true}) -- default
+	end
 
     the = {}
     the.player = nil
@@ -52,10 +55,4 @@ end
 
 function love.draw()
     fx.draw()
-end
-
-function love.keypressed(key, isrepeat)
-	if key == 'escape' then
-		love.event.quit()
-	end
 end

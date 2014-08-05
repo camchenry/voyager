@@ -18,7 +18,7 @@ menu.items = {
     {
         title = "OPTIONS",
         action = function()
-            state.switch(options)
+			state.push(options)
         end,
     },
 
