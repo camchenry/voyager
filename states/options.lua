@@ -6,7 +6,7 @@ end
 
 function options:enter()
 	local width, height, flags = love.window.getMode()
-
+	
     self.vsync = Checkbox:new('vsync', 50, 50)
 	self.vsync.selected = flags.vsync
 	
@@ -31,7 +31,7 @@ function options:enter()
 	self.resolution:setText('val1 x val2')
 	
 	
-	local fsaaOptions = {0, 2, 4, 8}
+	local fsaaOptions = {0, 2, 4, 8, 16, 32}
 	self.fsaa = List:new('antialiasing samples', fsaaOptions, 50, 210)
 	self.fsaa:selectValue(flags.fsaa)
 	self.fsaa:setText('valx')
@@ -51,6 +51,12 @@ function options:enter()
 		local borderless = self.borderless.selected
 		
 		love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
+		
+		
+		local width, height, flags = love.window.getMode()
+		if fsaa ~= flags.fsaa then
+			fx.text(5, 'fsaa value not supported', 25, love.window.getHeight()-120, {255, 0, 0}) 
+		end
 		
 		self:save(width, height, vsync, fullscreen, borderless, fsaa)
 	end
