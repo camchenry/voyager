@@ -16,7 +16,7 @@ function options:enter()
 	self.borderless = Checkbox:new('borderless', 50, 130)
 	self.borderless.selected = flags.borderless
 	
-	--local resolutions = {{1024, 768}, {1600, 900}}
+	-- Takes all available resolutions
 	local resTable = love.window.getFullscreenModes(1)
 	local resolutions = {}
 	for k, res in pairs(resTable) do
@@ -26,27 +26,33 @@ function options:enter()
 	end
 	
 	self.resolution = List:new('resolution', resolutions, 50, 170)
+	self.resolution.listType = 'resolution'
+	self.resolution:selectTable({width, height})
+	self.resolution:setText('val1 x val2')
 	
-	for i, res in ipairs(resolutions) do
-		if width == res.width and height == res.height then
-			self.resolution.selected = i
-		end
-	end
+	
+	local fsaaOptions = {0, 2, 4, 8}
+	self.fsaa = List:new('antialiasing samples', fsaaOptions, 50, 210)
+	self.fsaa:selectValue(flags.fsaa)
+	self.fsaa:setText('valx')
+	
 	
 	
 	-- applies current config settings
-	self.apply = Button:new('apply changes', 50, 240)
+	self.apply = Button:new('apply changes', 50, 280)
 	self.apply.activated = function ()
 		local width = self.resolution.options[self.resolution.selected][1]
 		local height = self.resolution.options[self.resolution.selected][2]
+		
+		local fsaa = self.fsaa.options[self.fsaa.selected]
 		
 		local vsync = self.vsync.selected
 		local fullscreen = self.fullscreen.selected
 		local borderless = self.borderless.selected
 		
-		love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless})
+		love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
 		
-		self:save(width, height, vsync, fullscreen, borderless)
+		self:save(width, height, vsync, fullscreen, borderless, fsaa)
 	end
 end
 
@@ -58,6 +64,7 @@ function options:mousepressed(x, y, button)
 	end
 	
 	self.resolution:mousepressed(x, y, button)
+	self.fsaa:mousepressed(x, y, button)
 	
 	self.apply:mousepressed(x, y, button)
 end
@@ -74,24 +81,28 @@ function options:draw()
 	self.borderless:draw()
 	
 	self.resolution:draw()
+	self.fsaa:draw()
 	
 	self.apply:draw()
 end
 
 
-function options:save(width, height, vsync, fullscreen, borderless)
+function options:save(width, height, vsync, fullscreen, borderless, fsaa)
 	local str = ''
 	
 	-- prepares config save data
+	
+	-- resolution
+	str = str.. 'screen width: ' ..tostring(width).. '\n'
+	str = str.. 'screen height: ' ..tostring(height).. '\n'
 	
 	-- checkboxes
 	str = str.. 'vsync: ' ..tostring(vsync).. '\n'
 	str = str.. 'fullscreen: '..tostring(fullscreen).. '\n'
 	str = str.. 'borderless: '..tostring(borderless).. '\n'
 	
-	-- resolution
-	str = str.. 'screen width: ' ..tostring(width).. '\n'
-	str = str.. 'screen height: ' ..tostring(height).. '\n'
+	-- fsaa
+	str = str.. 'fsaa: ' ..tostring(fsaa).. '\n'
 	
 
 	love.filesystem.write(self.saveFile, str)
@@ -107,12 +118,15 @@ function options:load()
 
 		-- iterates through each line of the config file, removes extra line data
 		for line in love.filesystem.lines(saveFile) do
-			if string.find(line, 'vsync: ') then config.vsync = string.gsub(line, 'vsync: ', '')
+			if string.find(line, 'screen width: ') then width = string.gsub(line, 'screen width: ', '')
+			elseif string.find(line, 'screen height: ') then height = string.gsub(line, 'screen height: ', '')
+			
+			elseif string.find(line, 'vsync: ') then config.vsync = string.gsub(line, 'vsync: ', '')
 			elseif string.find(line, 'fullscreen: ') then config.fullscreen = string.gsub(line, 'fullscreen: ', '')
 			elseif string.find(line, 'borderless: ') then config.borderless = string.gsub(line, 'borderless: ', '')
 			
-			elseif string.find(line, 'screen width: ') then width = string.gsub(line, 'screen width: ', '')
-			elseif string.find(line, 'screen height: ') then height = string.gsub(line, 'screen height: ', '')
+			
+			elseif string.find(line, 'fsaa: ') then config.fsaa = string.gsub(line, 'fsaa: ', '')
 			end
 		end
 		
@@ -125,6 +139,8 @@ function options:load()
 		
 		if config.borderless == "true" then config.borderless = true
 		else config.borderless = false end
+		
+		if config.fsaa then config.fsaa = tonumber(config.fsaa) end
 		
 		love.window.setMode(tonumber(width), tonumber(height), config)
 		
