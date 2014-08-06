@@ -54,8 +54,9 @@ function options:enter()
 		
 		
 		local width, height, flags = love.window.getMode()
-		if fsaa ~= flags.fsaa then
-			fx.text(5, 'fsaa value not supported', 25, love.window.getHeight()-120, {255, 0, 0}) 
+		if fsaa ~= flags.fsaa then -- Notifies the player if the fsaa value is invalid
+			fx.text(5, 'fsaa value not supported', 25, love.window.getHeight()-120, {255, 0, 0})
+			fsaa = 0 -- If the selected fsaa value is not supported, then it will store the value as 0
 		end
 		
 		self:save(width, height, vsync, fullscreen, borderless, fsaa)
