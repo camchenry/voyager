@@ -47,8 +47,10 @@ function StarSystem:load(name)
 end
 
 function StarSystem:entered()
-    for comm, price in pairs(tradecenter.commodityPrices) do
-        tradecenter.commodityPrices[comm] = tradecenter.commodityPrices[comm] + math.random(-50, 50)
+    if tradecenter.commodityPrices ~= nil then
+        for comm, price in pairs(tradecenter.commodityPrices) do
+            tradecenter.commodityPrices[comm] = tradecenter.commodityPrices[comm] + math.random(-50, 50)
+        end
     end
 end
 

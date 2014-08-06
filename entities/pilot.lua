@@ -34,5 +34,7 @@ function Pilot:jump()
 
     the.system:entered()
 
+    starmap.selectedSystem = nil
+
     self.ship.jumping = false
 end

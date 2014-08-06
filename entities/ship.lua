@@ -66,6 +66,10 @@ function Ship:thrustRetrograde()
     self.body:applyForce(-dx, -dy)
 end
 
+function Ship:stop()
+    self.body:setLinearVelocity(0, 0)
+end
+
 function Ship:getCommodityMass(commodity)
     assert(commodity ~= nil, 'commodity was nil')
     return self.cargo[commodity]

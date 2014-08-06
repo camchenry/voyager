@@ -55,15 +55,25 @@ function game:keypressed(key, isrepeat)
 
     if key == "j" then
         the.player:jump()
+        self.selectedObject = nil
     end
 
     if key == "l" then
         if self.selectedObject ~= nil then
             the.player.planet = self.selectedObject
+            the.player.ship:stop()
             self.selectedObject = nil
             state.switch(landed)
         end
     end
+
+    if key == "escape" then
+        if self.selectedObject ~= nil then
+            self.selectedObject = nil
+        end
+    end
+
+
 end
 
 function game:mousepressed(x, y, button)
@@ -75,12 +85,9 @@ end
 function game:draw()
     love.graphics.setColor(255, 255, 255)
 
-    -- things that shouldn't be translated
-
-    love.graphics.print(the.system.name)
-
     love.graphics.translate(self.translateX, self.translateY)
     -- things that should be translated
+
     
     the.system:draw()
 
@@ -88,8 +95,44 @@ function game:draw()
     if self.selectedObject ~= nil then
         local obj = self.selectedObject
 
-        love.graphics.rectangle("line", obj.x-obj.width/2-5, obj.y-obj.height/2-5, obj.width+5, obj.height+5)
+        love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
     end
 
     the.player.ship:draw()
+
+    love.graphics.origin()
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.setLineWidth(1)
+
+    if self.selectedObject ~= nil then
+        
+        
+
+        local text = 'STELLAR DESTINATION: '..string.upper(self.selectedObject.name)
+        love.graphics.setFont(fontBold[28])
+        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
+        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
+
+        local text = 'PRESS (L) TO LAND'
+        love.graphics.setFont(font[24])
+        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
+
+    elseif starmap.selectedSystem ~= nil then
+        local text = 'HYPERJUMP DESTINATION: '..string.upper(starmap.selectedSystem)
+        love.graphics.setFont(fontBold[28])
+        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
+        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
+
+        local text = 'PRESS (J) TO JUMP'
+        love.graphics.setFont(font[24])
+        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
+    else
+        local text = 'LOCATION: '..string.upper(the.system.name)
+        love.graphics.setFont(fontBold[28])
+        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
+        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
+    end
+
+
+
 end
