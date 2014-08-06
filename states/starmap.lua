@@ -11,8 +11,8 @@ function starmap:init()
 end
 
 function starmap:enter()
-    self.translateX = love.window.getWidth()/2
-    self.translateY = love.window.getHeight()/2
+    self.translateX = love.window.getWidth()/2 - the.system.x
+    self.translateY = love.window.getHeight()/2 - the.system.y
 
     self.mouseX = 0
     self.mouseY = 0
@@ -72,6 +72,18 @@ function starmap:draw()
     for systemName, system in pairs(self.rawSystemData) do
         love.graphics.circle("line", system.x, system.y, 10)
         love.graphics.print(systemName, system.x+12, system.y-25)
+
+        -- current location indicator
+        if systemName == the.system.name then
+            love.graphics.setColor(0, 255, 255)
+            love.graphics.circle("fill", system.x, system.y, 5)
+            love.graphics.setColor(255, 255, 255)
+        -- selected system jump line
+        elseif systemName == self.selectedSystem then
+            love.graphics.setColor(255, 255, 255, 33)
+            love.graphics.line(system.x, system.y, the.system.y, the.system.x)
+            love.graphics.setColor(255, 255, 255, 255)
+        end
     end
 
     love.graphics.pop()

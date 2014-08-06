@@ -28,6 +28,8 @@ function StarSystem:load(name)
     local systemData = starSystems[name]
 
     self.name = name
+    self.x = systemData.x
+    self.y = systemData.y
     self.objects = {}
     self.entities = {}
 
