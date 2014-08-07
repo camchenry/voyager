@@ -4,6 +4,7 @@ vector = require 'libs.vector'
 state = require 'libs.state'
 tween = require 'libs.tween'
 fx = require 'libs.fx'
+require 'libs.generalmath'
 require 'libs.util'
 
 -- gamestates
