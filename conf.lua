@@ -35,7 +35,7 @@ end
 config = {
     gameTitle = "Voyager",
     windowTitle = "Voyager",
-    windowIcon = 'img/icon.png',
+    windowIcon = 'img/customIcon.png',
 
     -- see: http://love2d.org/wiki/love.graphics.setDefaultFilter
     filterModeMin = "nearest",
