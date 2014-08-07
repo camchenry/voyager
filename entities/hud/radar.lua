@@ -13,8 +13,10 @@ function Radar:draw()
     love.graphics.setColor(255, 255, 255)
     if the.system.objects ~= nil then
         for i, system in pairs(the.system.objects) do
-            love.graphics.circle("fill", )
+            -- draw object
         end
+
+        -- needs entities too
     end
 
     love.graphics.setColor(44, 44, 44, 200)
