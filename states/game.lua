@@ -4,6 +4,9 @@ function game:init()
     -- the system will be changed to match whichever system the player is in
     the.system:load(the.player.location)
 
+    self.HUD = HUD:new()
+    self.HUD:addWidget(Radar:new())
+
     self.selectedObject = nil
 
     self.translateX = 0
@@ -45,6 +48,8 @@ function game:update(dt)
     the.system:update(dt)
 
     the.player.ship:update(dt)
+
+    self.HUD:update(dt)
 
     self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
     self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
@@ -112,6 +117,8 @@ function game:draw()
     love.graphics.origin()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
+
+    self.HUD:draw()
 
     if self.selectedObject ~= nil then
         
