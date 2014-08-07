@@ -25,6 +25,7 @@ function Pilot:jump()
 
     -- system is selected, time to jump
     self.ship.body:setLinearVelocity(0, 0)
+	self.ship.body:setPosition(50, 50) -- Places the ship near the center of the system
 
     fx.flash(0.5, {255, 255, 255})
 

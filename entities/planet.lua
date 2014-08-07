@@ -13,7 +13,13 @@ function Planet:initialize()
 end
 
 function Planet:canLand(ship)
-    return true
+	local x, y = ship.body:getPosition()
+	-- Checks if the ship is close enough to the planet to land (in a square bounding box)
+	if x >= self.x - self.radius - 10 and x <= self.x + self.radius + 10 then
+		if y >= self.y - self.radius - 10 and y <= self.y + self.radius + 10 then
+			return true
+		end
+	end
 end
 
 function Planet:isHabitable()

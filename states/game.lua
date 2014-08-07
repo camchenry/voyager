@@ -60,10 +60,12 @@ function game:keypressed(key, isrepeat)
 
     if key == "l" then
         if self.selectedObject ~= nil then
-            the.player.planet = self.selectedObject
-            the.player.ship:stop()
-            self.selectedObject = nil
-            state.switch(landed)
+			if self.selectedObject:canLand(the.player.ship) then
+				the.player.planet = self.selectedObject
+				the.player.ship:stop()
+				self.selectedObject = nil
+				state.switch(landed)
+			end
         end
     end
 
