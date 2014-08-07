@@ -16,6 +16,8 @@ function starmap:enter()
 
     self.mouseX = 0
     self.mouseY = 0
+	
+	self.centerX, self.centerY = love.window.getWidth()/2, love.window.getHeight()/2
 
     self.selectedSystem = nil
 
@@ -27,8 +29,10 @@ function starmap:leave()
 end
 
 function starmap:update(dt)
-    local centerX, centerY = love.window.getWidth()/2, love.window.getHeight()/2
-    love.mouse.setPosition(centerX, centerY)
+    local centerX, centerY = self.centerX, self.centerY
+    if love.window.hasMouseFocus() then
+		love.mouse.setPosition(centerX, centerY)
+	end
 
     local dx, dy = centerX - love.mouse.getX(), centerY - love.mouse.getY()
     self.translateX = self.translateX + dx
@@ -46,7 +50,7 @@ end
 
 function starmap:mousepressed(x, y, button)
     if button == "l" then
-        local mouseX, mouseY = love.window.getWidth()/2, love.window.getHeight()/2
+        local mouseX, mouseY = self.centerX, self.centerY
 
         for systemName, system in pairs(self.rawSystemData) do
             local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
@@ -89,7 +93,7 @@ function starmap:draw()
     love.graphics.pop()
 
     -- middle indicator
-    local centerX, centerY = love.window.getWidth()/2, love.window.getHeight()/2
+    local centerX, centerY = self.centerX, self.centerY
     love.graphics.circle("fill", centerX, centerY, 3)
 
     -- x and y text
