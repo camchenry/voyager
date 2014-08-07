@@ -97,7 +97,7 @@ function starmap:draw()
         -- selected system jump line
         elseif systemName == self.selectedSystem then
             love.graphics.setColor(255, 255, 255, 33)
-            love.graphics.line(system.x, system.y, the.system.y, the.system.x)
+            love.graphics.line(system.x, system.y, the.system.x, the.system.y)
             love.graphics.setColor(255, 255, 255, 255)
         end
     end
