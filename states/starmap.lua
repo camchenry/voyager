@@ -13,28 +13,40 @@ end
 function starmap:enter()
     self.translateX = love.window.getWidth()/2 - the.system.x
     self.translateY = love.window.getHeight()/2 - the.system.y
+	
+	self.centerX, self.centerY = love.window.getWidth()/2, love.window.getHeight()/2
 
     self.mouseX = 0
     self.mouseY = 0
-	
-	self.centerX, self.centerY = love.window.getWidth()/2, love.window.getHeight()/2
 
     self.selectedSystem = nil
 
     love.mouse.setVisible(false)
+	
+	self.first = true
 end
 
 function starmap:leave()
     love.mouse.setVisible(true)
 end
 
+function starmap:focus(f)
+	if f then self.first = true end
+end
+
 function starmap:update(dt)
     local centerX, centerY = self.centerX, self.centerY
-    if love.window.hasMouseFocus() then
+    if love.window.hasMouseFocus() then -- Prevents the mouse being grabbed by the game while alt-tabbing
 		love.mouse.setPosition(centerX, centerY)
 	end
 
-    local dx, dy = centerX - love.mouse.getX(), centerY - love.mouse.getY()
+	local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
+	if self.first then -- The first time through, the mouse will always be at the center of the screen
+		self.first = false
+		mouseX, mouseY = centerX, centerY
+	end
+	
+    local dx, dy = centerX - mouseX, centerY - mouseY
     self.translateX = self.translateX + dx
     self.translateY = self.translateY + dy
 
