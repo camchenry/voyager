@@ -34,7 +34,9 @@ function Radar:draw()
 			end
 			
             love.graphics.circle("fill", self.x - radarX, self.y - radarY, 3)
-        end
+
+        -- needs entities too
+		end
     end
 
     love.graphics.setColor(44, 44, 44, 200)
