@@ -14,10 +14,12 @@ end
 
 function StarSystem:addEntity(entity)
     table.insert(self.entities, entity)
+    return entity
 end
 
 function StarSystem:addObject(object)
     table.insert(self.objects, object)
+    return object
 end
 
 function StarSystem:load(name)
@@ -32,6 +34,8 @@ function StarSystem:load(name)
     self.y = systemData.y
     self.objects = {}
     self.entities = {}
+
+    assert(systemData.objects ~= nil)
 
     -- add all objects
     for k, object in pairs(systemData.objects) do

@@ -3,16 +3,19 @@
 
 Ship = class("Ship")
 
-function Ship:initialize(world)
+function Ship:initialize(world, controlScheme)
     if world == nil and the.system.world ~= nil then world = the.system.world end
 
     self.width = 150
     self.height = 50
 
     -- physics objects
-    self.body = love.physics.newBody(world, 50, 50, "dynamic")
+    self.body = love.physics.newBody(world, 27, 100, "dynamic")
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
+
+    -- control scheme (assume ComputerControl as default)
+    self.controlScheme = controlScheme or ComputerControl
 
     -- physics properties
     self.mass = 4
@@ -39,17 +42,15 @@ function Ship:initialize(world)
 end
 
 function Ship:update(dt)
-    if love.keyboard.isDown("w") then
-        self:thrustPrograde()
-    elseif love.keyboard.isDown("s") then
-        self:thrustRetrograde()
-    end
+    self.controlScheme.update(self, dt)
+end
 
-    if love.keyboard.isDown("a") then
-        self.body:applyTorque(-self.torque)
-    elseif love.keyboard.isDown("d") then
-        self.body:applyTorque(self.torque)
-    end
+-- if direction is 1, turn clockwise
+-- if direction is -1, turn anticlockwise
+function Ship:turn(direction)
+    assert(direction == 1 or direction == -1)
+
+    self.body:applyTorque(self.torque * direction)
 end
 
 function Ship:thrustPrograde()

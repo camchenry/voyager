@@ -47,4 +47,26 @@ STAR_SYSTEMS["Alpha Centauri"] = {
     objects = {}
 }
 
+STAR_SYSTEMS["Belith"] = {
+    x = -200,
+    y = 200,
+
+    objects = {},
+}
+
+STAR_SYSTEMS["Shalim"] = {
+    x = 400,
+    y = 250,
+
+    objects = {},
+}
+
+STAR_SYSTEMS["Alatar"] = {
+    x = 280,
+    y = 330,
+
+    objects = {},
+}
+
+
 return STAR_SYSTEMS

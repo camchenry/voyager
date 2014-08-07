@@ -7,7 +7,7 @@ function Planet:initialize()
     self.x = 0
     self.y = 0
 
-    self.radius = 50
+    self.radius = 90
     self.width = self.radius*2
     self.height = self.radius*2
 end

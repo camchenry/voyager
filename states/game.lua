@@ -8,6 +8,9 @@ function game:init()
 
     self.translateX = 0
     self.translateY = 0
+
+    local ship = the.system:addEntity(Ship:new())
+    ship.body:setPosition(0, 0)
 end
 
 function game:load(file, ignoreError)
@@ -98,6 +101,10 @@ function game:draw()
         local obj = self.selectedObject
 
         love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
+    end
+
+    for i, body in pairs(the.system.world:getBodyList()) do
+        love.graphics.print(body:getX()..", "..body:getY(), 0, 50+(i*50))
     end
 
     the.player.ship:draw()

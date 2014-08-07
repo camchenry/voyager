@@ -8,7 +8,7 @@ function Pilot:initialize(first, last, gender)
     self.name = first .. " " .. last
     self.gender = gender
 
-    self.ship = Ship:new(the.system.world)
+    self.ship = Ship:new(the.system.world, PlayerControl)
     self.location = "Sol"
     self.planet = nil
 
