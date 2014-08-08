@@ -33,12 +33,15 @@ function Radar:draw()
 				radarY = math.sin(angle) * self.radius
 			end
 			
-            love.graphics.circle("fill", self.x - radarX, self.y - radarY, 3)
+            love.graphics.circle("fill", self.x - radarX, self.y - radarY, 4)
 
         -- needs entities too
 		end
     end
 
-    love.graphics.setColor(44, 44, 44, 200)
+	love.graphics.setLineWidth(6)
+    love.graphics.setColor(44, 44, 44, 255)
+	love.graphics.circle("line", self.x, self.y, self.radius+3)
+	love.graphics.setColor(44, 44, 44, 200)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 end
