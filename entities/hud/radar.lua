@@ -14,6 +14,9 @@ end
 
 function Radar:draw()
     -- Radar circle
+    love.graphics.setLineWidth(6)
+    love.graphics.setColor(44, 44, 44, 255)
+    love.graphics.circle("line", self.x, self.y, self.radius+3)
     love.graphics.setColor(44, 44, 44, 200)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 
