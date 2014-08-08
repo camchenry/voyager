@@ -4,6 +4,7 @@ vector = require 'libs.vector'
 state = require 'libs.state'
 tween = require 'libs.tween'
 fx = require 'libs.fx'
+require 'libs.generalmath'
 require 'libs.util'
 
 -- gamestates
@@ -25,6 +26,9 @@ require 'entities.ui.list'
 require 'entities.control.player'
 require 'entities.control.computer'
 
+require 'entities.hud.radar'
+
+require 'entities.hud'
 require 'entities.pilot'
 require 'entities.system'
 require 'entities.ship'
