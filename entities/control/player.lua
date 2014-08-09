@@ -1,5 +1,5 @@
 PlayerControl = {
-    update = function(ship, dt)
+    update = function(ship, world, playership, dt)
 
         if love.keyboard.isDown("w") then
             ship:thrustPrograde()

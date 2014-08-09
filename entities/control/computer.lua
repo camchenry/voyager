@@ -1,7 +1,15 @@
 ComputerControl = {
-    update = function(ship, dt)
+    update = function(ship, world, playership, dt)
 
-        ship:turn(1)
+        local facing = ship:facing({x=playership.body:getX(), y=playership.body:getY()})
+
+        if not facing then
+            ship:turnToward(playership)
+        end
+
+        if facing then
+            ship:thrustPrograde()
+        end
 
     end
 }

@@ -35,6 +35,13 @@ function StarSystem:load(name)
     self.objects = {}
     self.entities = {}
 
+    -- purge all physics objects, except the player ship
+    for i, body in pairs(self.world:getBodyList()) do
+        if body ~= the.player.ship.body then
+            body:destroy()
+        end
+    end
+
     assert(systemData.objects ~= nil)
 
     -- add all objects

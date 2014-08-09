@@ -18,10 +18,10 @@ function Ship:initialize(world, controlScheme)
     self.controlScheme = controlScheme or ComputerControl
 
     -- physics properties
-    self.mass = 4
+    self.mass = 3.25
     self.torque = 250
     self.angularDamping = 20
-    self.inertia = 10
+    self.inertia = 10 -- more inertia = more resistance to force
     self.speed = 250
     self.maxSpeed = 300
 
@@ -42,7 +42,7 @@ function Ship:initialize(world, controlScheme)
 end
 
 function Ship:update(dt)
-    self.controlScheme.update(self, dt)
+    self.controlScheme.update(self, the.system.world, the.player.ship, dt)
 end
 
 -- if direction is 1, turn clockwise
@@ -51,6 +51,48 @@ function Ship:turn(direction)
     assert(direction == 1 or direction == -1)
 
     self.body:applyTorque(self.torque * direction)
+end
+
+function Ship:turnToward(target)
+    if type(target) == 'number' then
+        target = {
+            x = math.cos(target),
+            y = math.sin(target)
+        }
+    elseif not vector.isvector(target) then
+        target = vector(target.body:getX() - self.body:getX(), target.body:getY() - self.body:getY())
+    end
+
+    if self:facing(target) then
+        return
+    end
+
+    local rotX = math.cos(self.body:getAngle())
+    local rotY = math.sin(self.body:getAngle())
+
+    -- Determine if we should turn left or right
+    -- http://stackoverflow.com/questions/14807287/how-can-i-determine-whether-its-faster-to-face-an-object-rotating-clockwise-or
+    
+    if target.x * rotY > target.y * rotX then
+        self:turn(-1)
+    else
+        self:turn(1)
+    end
+end
+
+function Ship:facing(target, tolerance)
+    -- tolerance for how close it has to be to target angle
+    tolerance = tolerance or math.rad(10)
+
+    local angleToTarget = math.atan2(target.y, target.x)
+    angleToTarget = angleToTarget % (2*math.pi)
+
+    local shipAngle = self.body:getAngle() % (2*math.pi)
+
+    -- the absolute difference between current rotation and target angle
+    local difference = math.abs(shipAngle - angleToTarget)
+
+    return difference <= tolerance
 end
 
 function Ship:thrustPrograde()
