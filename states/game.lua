@@ -74,6 +74,8 @@ function game:keypressed(key, isrepeat)
 				self.selectedObject = nil
 				state.switch(landed)
 			end
+        else
+            self.selectedObject = the.system:closestObject(the.player.ship.body:getX()-self.translateX, the.player.ship.body:getY()-self.translateY)
         end
     end
 
@@ -88,7 +90,7 @@ end
 
 function game:mousepressed(x, y, button)
     if button == "l" then
-        self.selectedObject, self.dist = the.system:closestObject(x-self.translateX, y-self.translateY)
+        self.selectedObject = the.system:closestObject(x-self.translateX, y-self.translateY)
     end
 end
 
@@ -98,9 +100,7 @@ function game:draw()
     love.graphics.translate(self.translateX, self.translateY)
     -- things that should be translated
 
-    
-    the.system:draw()
-
+    love.graphics.setColor(255, 255, 255)
     -- selected object display
     if self.selectedObject ~= nil then
         local obj = self.selectedObject
@@ -108,10 +108,7 @@ function game:draw()
         love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
     end
 
-    for i, body in pairs(the.system.world:getBodyList()) do
-        love.graphics.print(body:getX()..", "..body:getY(), 0, 50+(i*50))
-    end
-
+    the.system:draw()
     the.player.ship:draw()
 
     love.graphics.origin()

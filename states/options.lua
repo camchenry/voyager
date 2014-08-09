@@ -7,13 +7,13 @@ end
 function options:enter()
 	local width, height, flags = love.window.getMode()
 	
-    self.vsync = Checkbox:new('vsync', 50, 50)
+    self.vsync = Checkbox:new('VSYNC', 25, 50)
 	self.vsync.selected = flags.vsync
 	
-	self.fullscreen = Checkbox:new('fullscreen', 50, 90)
+	self.fullscreen = Checkbox:new('FULLSCREEN', 25, 90)
 	self.fullscreen.selected = flags.fullscreen
 	
-	self.borderless = Checkbox:new('borderless', 50, 130)
+	self.borderless = Checkbox:new('BORDERLESS', 25, 130)
 	self.borderless.selected = flags.borderless
 	
 	-- Takes all available resolutions
@@ -25,42 +25,54 @@ function options:enter()
 		end
 	end
 	
-	self.resolution = List:new('resolution', resolutions, 50, 170)
+	self.resolution = List:new('RESOLUTION', resolutions, 25, 170)
 	self.resolution.listType = 'resolution'
 	self.resolution:selectTable({width, height})
 	self.resolution:setText('val1 x val2')
 	
 	
 	local fsaaOptions = {0, 2, 4, 8, 16, 32}
-	self.fsaa = List:new('antialiasing samples', fsaaOptions, 50, 210)
+	self.fsaa = List:new('ANTIALIASING', fsaaOptions, 25, 210)
 	self.fsaa:selectValue(flags.fsaa)
 	self.fsaa:setText('valx')
 	
 	
 	
 	-- applies current config settings
-	self.apply = Button:new('apply changes', 50, 280)
-	self.apply.activated = function ()
-		local width = self.resolution.options[self.resolution.selected][1]
-		local height = self.resolution.options[self.resolution.selected][2]
-		
-		local fsaa = self.fsaa.options[self.fsaa.selected]
-		
-		local vsync = self.vsync.selected
-		local fullscreen = self.fullscreen.selected
-		local borderless = self.borderless.selected
-		
-		love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
-		
-		
-		local width, height, flags = love.window.getMode()
-		if fsaa ~= flags.fsaa then -- Notifies the player if the fsaa value is invalid
-			fx.text(5, 'fsaa value not supported', 25, love.window.getHeight()-120, {255, 0, 0})
-			fsaa = 0 -- If the selected fsaa value is not supported, then it will store the value as 0
-		end
-		
-		self:save(width, height, vsync, fullscreen, borderless, fsaa)
+	self.back = Button:new("BACK", 25, love.window.getHeight()-80)
+	self.back.activated = function()
+		state.switch(menu)
 	end
+
+	self.apply = Button:new('APPLY', 125, love.window.getHeight()-80)
+	self.apply.activated = function ()
+		self:applyChanges()
+	end
+end
+
+function options:applyChanges()
+	local width = self.resolution.options[self.resolution.selected][1]
+	local height = self.resolution.options[self.resolution.selected][2]
+	
+	local fsaa = self.fsaa.options[self.fsaa.selected]
+	
+	local vsync = self.vsync.selected
+	local fullscreen = self.fullscreen.selected
+	local borderless = self.borderless.selected
+	
+	love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
+	
+	
+	local width, height, flags = love.window.getMode()
+	if fsaa ~= flags.fsaa then -- Notifies the player if the fsaa value is invalid
+		fx.text(5, 'fsaa value not supported', 25, love.window.getHeight()-120, {255, 0, 0})
+		fsaa = 0 -- If the selected fsaa value is not supported, then it will store the value as 0
+	end
+	
+	self:save(width, height, vsync, fullscreen, borderless, fsaa)
+
+	state.switch(menu)
+	state.switch(options)
 end
 
 function options:mousepressed(x, y, button)
@@ -74,6 +86,7 @@ function options:mousepressed(x, y, button)
 	self.fsaa:mousepressed(x, y, button)
 	
 	self.apply:mousepressed(x, y, button)
+	self.back:mousepressed(x, y, button)
 end
 
 function options:keypressed(key)
@@ -91,6 +104,7 @@ function options:draw()
 	self.fsaa:draw()
 	
 	self.apply:draw()
+	self.back:draw()
 end
 
 

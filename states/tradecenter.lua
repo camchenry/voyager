@@ -1,23 +1,10 @@
 tradecenter = {}
 
-tradecenter.items = {
-    {
-        title = "LEAVE",
-        action = function()
-            state.switch(landed)
-        end,
-    },
-}
-
 tradecenter.buttons = {}
 tradecenter.commButtons = {}
 
 function tradecenter:init()
     self.selectedCommodity = nil
-
-    for i, item in pairs(self.items) do
-        table.insert(self.buttons, Button:new(item.title, 25, 50*(i-1)+600, nil, nil, font[32], item.action))
-    end
 
     self.commodities = {
         "Equipment",
@@ -67,6 +54,9 @@ function tradecenter:init()
             end
         end
     end))
+
+    self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
+    table.insert(self.buttons, self.leaveButton)
 end
 
 function tradecenter:enter()

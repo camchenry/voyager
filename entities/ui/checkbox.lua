@@ -1,8 +1,8 @@
 Checkbox = class('Checkbox')
 
-function Checkbox:initialize(text, x, y, w, h)
+function Checkbox:initialize(text, x, y, w, h, fontSize, activated, deactivated)
 	self.text = text
-	self.font = font[22]
+	self.font = fontSize or font[22]
 	self.x = x
 	self.y = y -- This centers it on the line
 	self.width = w or 32
@@ -10,15 +10,15 @@ function Checkbox:initialize(text, x, y, w, h)
 	
 	self.textHeight = self.font:getHeight(self.text)
 	
-	self.color = {8, 70, 120}
-	self.active = {230, 115, 39}
+	self.color = {0, 0, 0}
+	self.active = {255, 255, 255}
 	
 	self.textColor = {255, 255, 255}
 	
 	self.selected = false
 	
-	self.activated = function() end
-	self.deactivated = function() end
+	self.activated = activated or function() end
+	self.deactivated = deactivated or function() end
 end
 
 function Checkbox:draw()
@@ -36,8 +36,11 @@ function Checkbox:draw()
 	
 	local x = self.x
 	local y = self.y - self.height/2
-	
-    love.graphics.rectangle("fill", x, y, self.width, self.height)
+
+	love.graphics.setLineWidth(3)
+
+	-- diagonal check line
+	love.graphics.line(x, y, x+self.width, y+self.height)
 	
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.rectangle("line", x, y, self.width, self.height)
@@ -53,13 +56,23 @@ function Checkbox:draw()
 	love.graphics.setFont(oldFont)
 end
 
+function Checkbox:hovering(x, y)
+	local xBoundMax = self.x + self.width + 10 + self.font:getWidth(self.text)
+	local xBoundMin = self.x
+	local yBoundMax = self.y + self.height/2
+	local yBoundMin = self.y - self.height/2
+
+	return x >= xBoundMin and x <= xBoundMax  and y >= yBoundMin and y <= yBoundMax
+end
+
 function Checkbox:mousepressed(x, y)
-	if x >= self.x and x <= self.x + self.width and y >= self.y - self.height/2 and y <= self.y + self.height/2 then
-		if self.selected == false then
-			self.selected = true
+	if self:hovering(x, y) then
+		-- toggle selected state
+		self.selected = not self.selected
+
+		if self.selected then
 			self.activated()
 		else
-			self.selected = false
 			self.deactivated()
 		end
 	end

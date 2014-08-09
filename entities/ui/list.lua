@@ -11,39 +11,48 @@ function List:initialize(prefix, options, x, y, w, h)
 	self.options = options
 	self.selected = 1
 	
-	self.w = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
-	self.h = h or self.font:getHeight()
+	self.width = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
+	self.height = h or self.font:getHeight()
+
+	self.leftButton = Button:new("<", self.x, self.y, nil, nil, fontBold[22])
+	self.leftButton.activated = function()
+		self:prev()
+	end
+	self.rightButton = Button:new(">", self.x+self.width, self.y, nil, nil, fontBold[22])
+	self.rightButton.activated = function()
+		self:next()
+	end
 end
 
 function List:draw()
-	local r, g, b, a = love.graphics.getColor()
-    local oldColor = {r, g, b, a}
-	
-	local oldFont = love.graphics.getFont()
+	self.rightButton.x = self.x+self.width+self.leftButton.width+10
+
 	love.graphics.setFont(self.font)
 
-
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+	--love.graphics.rectangle('fill', self.x+self.leftButton.width+5, self.y, self.width, self.height)
 	
-	love.graphics.setColor(0, 0, 0)
+	--love.graphics.setColor(0, 0, 0)
 	
-	love.graphics.print(self.prefix.. ': ' ..self.text, self.x, self.y)
-	
-	love.graphics.setColor(oldColor)
-	love.graphics.setFont(oldFont)
+	love.graphics.print(self.prefix.. ': ' ..self.text, self.x+self.leftButton.width+5, self.y)
+
+	self.leftButton:draw()
+	self.rightButton:draw()
+end
+
+function List:next()
+	self.selected = self.selected < #self.options and self.selected + 1 or 1
+	self:setText()
+end
+
+function List:prev()
+	self.selected = self.selected > 1 and self.selected - 1 or #self.options
+	self:setText()
 end
 
 function List:mousepressed(x, y, button)
-	if x >= self.x and x <= self.x + self.w and y >= self.y and y <= self.y + self.h then
-		if button == 'l' then
-			self.selected = self.selected < #self.options and self.selected + 1 or 1
-			self:setText()
-		elseif button == 'r' then
-			self.selected = self.selected > 1 and self.selected - 1 or #self.options
-			self:setText()
-		end
-	end
+	self.leftButton:mousepressed(x, y, button)
+	self.rightButton:mousepressed(x, y, button)
 end
 
 
@@ -88,5 +97,5 @@ function List:setText(text)
 	if string.find(text, 'val2') then text = string.gsub(text, 'val2', self.options[self.selected][2]) end
 	
 	self.text = text
-	self.w = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
+	self.width = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
 end

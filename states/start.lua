@@ -10,21 +10,39 @@ function start:enter()
 
     self.pilotFirstInput.textLimit = 25
     self.pilotLastInput.textLimit = 25
-    self.pilotFirstInput.singleWord = true
-    self.pilotLastInput.singleWord = true
+    self.pilotFirstInput.singleWord = false
+    self.pilotLastInput.singleWord = false
 
     self.pilotGender = nil
 
 
-    self.pilotMale = Button:new("MALE", 70, 280, nil, nil, font[28], function() self.pilotGender = "male" end)
-    self.pilotFemale = Button:new("FEMALE", self.pilotMale.width+150, 280, nil, nil, font[28], function() self.pilotGender = "female" end)
+    self.pilotMale = Checkbox:new("MALE", 25, 300, nil, nil, font[28])
+    self.pilotMale.activated = function() 
+        self.pilotGender = "male"
+        self.pilotFemale.selected = false
+    end
 
-    self.completeForm = Button:new("COMPLETE FORM >", 25, love.window.getHeight()-80, nil, nil, font[28], function() self:continueToGame() end)
+    self.pilotFemale = Checkbox:new("FEMALE", self.pilotMale.width+150, 300, nil, nil, font[28])
+    self.pilotFemale.activated = function() 
+        self.pilotGender = "female"
+        self.pilotMale.selected = false
+    end
+
+    local text = "COMPLETE FORM >"
+    self.completeForm = Button:new(text, love.window.getWidth()-love.graphics.getFont():getWidth(text)-25, love.window.getHeight()-80, nil, nil, font[28])
+    self.completeForm.activated = function()
+        self:continueToGame()
+    end
+
+    self.back = Button:new("< BACK", 25, love.window.getHeight()-80)
+    self.back.activated = function()
+        state.switch(menu)
+    end
 end
 
 function start:validateForm()
-    local firstInput = self.pilotFirstInput.text:len() > 1
-    local lastInput = self.pilotLastInput.text:len() > 1
+    local firstInput = self.pilotFirstInput.text:len() > 0
+    local lastInput = self.pilotLastInput.text:len() > 0
     local gender = self.pilotGender == "male" or self.pilotGender == "female"
     local required = firstInput and lastInput and gender
     return required
@@ -65,6 +83,7 @@ function start:mousepressed(x, y, mbutton)
     self.pilotMale:mousepressed(x, y, mbutton)
     self.pilotFemale:mousepressed(x, y, mbutton)
     self.completeForm:mousepressed(x, y, mbutton)
+    self.back:mousepressed(x, y, mbutton)
 end
 
 function start:textinput(text)
@@ -89,17 +108,7 @@ function start:draw()
     -- male and female buttons
     self.pilotMale:draw()
     self.pilotFemale:draw()
-
-    love.graphics.setLineWidth(4)
-    love.graphics.rectangle("line", self.pilotMale.x-40, self.pilotMale.y+10, 30, 30)
-    if self.pilotGender == "male" then
-        love.graphics.line(self.pilotMale.x-40, self.pilotMale.y+10, self.pilotMale.x-10, self.pilotMale.y+40)
-    end
-
-    love.graphics.rectangle("line", self.pilotFemale.x-40, self.pilotFemale.y+10, 30, 30)
-    if self.pilotGender == "female" then
-        love.graphics.line(self.pilotFemale.x-40, self.pilotFemale.y+10, self.pilotFemale.x-10, self.pilotFemale.y+40)
-    end
     
     self.completeForm:draw()
+    self.back:draw()
 end
