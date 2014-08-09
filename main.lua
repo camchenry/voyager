@@ -8,31 +8,10 @@ require 'libs.generalmath'
 require 'libs.util'
 
 -- gamestates
-require 'states.menu'
-require 'states.game'
-require 'states.start'
-require 'states.continue'
-require 'states.options'
-require 'states.starmap'
-require 'states.landed'
-require 'states.tradecenter'
+require 'states.init'
 
 -- entities
-require 'entities.ui.button'
-require 'entities.ui.checkbox'
-require 'entities.ui.input'
-require 'entities.ui.list'
-
-require 'entities.control.player'
-require 'entities.control.computer'
-
-require 'entities.hud.radar'
-
-require 'entities.hud'
-require 'entities.pilot'
-require 'entities.system'
-require 'entities.ship'
-require 'entities.planet'
+require 'entities.init'
 
 function love.load()
 	love.window.setTitle(config.windowTitle)
