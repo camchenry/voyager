@@ -14,6 +14,28 @@ function game:init()
 
     local ship = the.system:addEntity(Ship:new())
     ship.body:setPosition(0, 0)
+	
+	
+	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*4, love.window.getHeight()*4, love.window.getWidth()*2, love.window.getHeight()*2)
+	self.starCanvas = love.graphics.newCanvas(love.window.getWidth()*2, love.window.getHeight()*2)
+	self.starCanvas:setWrap('repeat')
+	self.starCanvas:renderTo(function()
+		love.graphics.setColor(255, 255, 255)
+		local w, h = self.starCanvas:getDimensions()
+		
+		love.graphics.setPointStyle('smooth')
+		
+		for i = 1, 5 do
+			love.graphics.setPointSize(i)
+			local num = math.random(1000/i, 4000/i)
+			for j = 1, num do
+				if j < num/3 then love.graphics.setColor(math.random(255, 204), math.random(255, 230), math.random(255, 232))
+				elseif j < num*2/3 then love.graphics.setColor(math.random(255, 237), math.random(255, 227), math.random(255, 216))
+				else love.graphics.setColor(math.random(255, 220), math.random(255, 200), math.random(255, 232)) end
+				love.graphics.point(math.random(w)+.5, math.random(h)+.5)
+			end
+		end
+	end)
 end
 
 function game:load(file, ignoreError)
@@ -96,6 +118,15 @@ end
 
 function game:draw()
     love.graphics.setColor(255, 255, 255)
+	local x, y = 0, 0
+	if the.player.ship then
+		x, y = the.player.ship.body:getPosition()
+		x, y = x, y --math.floor(x/3), math.floor(y/3)
+		local w, h = self.starCanvas:getDimensions()
+		x = x % w
+		y = y % h
+	end
+	love.graphics.draw(self.starCanvas, self.starQuad, -x, -y)
 
     love.graphics.translate(self.translateX, self.translateY)
     -- things that should be translated
@@ -145,7 +176,7 @@ function game:draw()
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
         love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
     end
-
-
-
+	
+	love.graphics.setColor(255, 0, 0)
+	love.graphics.print(love.timer.getFPS(), 5, 5)
 end
