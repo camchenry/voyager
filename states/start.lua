@@ -21,12 +21,18 @@ function start:enter()
         self.pilotGender = "male"
         self.pilotFemale.selected = false
     end
+	self.pilotMale.deactivated = function()
+		self.pilotGender = nil
+	end
 
     self.pilotFemale = Checkbox:new("FEMALE", self.pilotMale.width+150, 300, nil, nil, font[28])
     self.pilotFemale.activated = function() 
         self.pilotGender = "female"
         self.pilotMale.selected = false
     end
+	self.pilotFemale.deactivated = function()
+		self.pilotGender = nil
+	end
 
     local text = "COMPLETE FORM >"
     self.completeForm = Button:new(text, love.window.getWidth()-love.graphics.getFont():getWidth(text)-25, love.window.getHeight()-80, nil, nil, font[28])
@@ -41,20 +47,29 @@ function start:enter()
 end
 
 function start:validateForm()
+	local errorMessage = "COMPLETE ALL FIELDS" -- default if form is invalid but reason cannot be determined
+	
     local firstInput = self.pilotFirstInput.text:len() > 0
     local lastInput = self.pilotLastInput.text:len() > 0
     local gender = self.pilotGender == "male" or self.pilotGender == "female"
     local required = firstInput and lastInput and gender
-    return required
+	
+	-- put in reverse order so that error messages give the upper forums priority (if multiple errors, firstInput error displayed, and so on)
+	if not gender then errorMessage = "NO GENDER GIVEN" end
+	if not lastInput then  errorMessage = "NO LAST NAME GIVEN" end
+	if not firstInput then errorMessage = "NO FIRST NAME GIVEN" end
+	
+    return required, errorMessage
 end
 
 function start:continueToGame()
-    if self:validateForm() then
+	local success, errorMessage = self:validateForm()
+    if success then
         self:initializePlayer()
         fx.reset()
         state.switch(game)
     else
-        fx.text(3, "COMPLETE ALL FIELDS", 25, love.window.getHeight()-120, {255, 0, 0}) 
+        fx.text(3, errorMessage, 25, love.window.getHeight()-120, {255, 0, 0}) 
     end
 end
 
