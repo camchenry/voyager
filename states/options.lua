@@ -41,12 +41,15 @@ function options:enter()
 	-- applies current config settings
 	self.back = Button:new("BACK", 25, love.window.getHeight()-80)
 	self.back.activated = function()
-		state.switch(menu)
+		state.pop() -- options can be accessed from multiple places in the game
 	end
 
 	self.apply = Button:new('APPLY', 125, love.window.getHeight()-80)
 	self.apply.activated = function ()
 		self:applyChanges()
+		
+		self.back.y = love.window.getHeight()-80
+		self.apply.y = love.window.getHeight()-80
 	end
 end
 
@@ -70,9 +73,6 @@ function options:applyChanges()
 	end
 	
 	self:save(width, height, vsync, fullscreen, borderless, fsaa)
-
-	state.switch(menu)
-	state.switch(options)
 end
 
 function options:mousepressed(x, y, button)
@@ -90,9 +90,7 @@ function options:mousepressed(x, y, button)
 end
 
 function options:keypressed(key)
-	if key == 'escape' then
-		state.pop()
-	end
+	
 end
 
 function options:draw()
