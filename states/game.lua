@@ -16,7 +16,17 @@ function game:init()
     ship.body:setPosition(0, 0)
 	
 	
-	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*4, love.window.getHeight()*4, love.window.getWidth()*2, love.window.getHeight()*2)
+	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 256, 256)
+	self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
+	self.starImages = {}
+	for i = 1, 2 do
+		self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
+		self.starImages[i]:setWrap('repeat')
+	end
+	
+	
+	--self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*4, love.window.getHeight()*4, love.window.getWidth()*2, love.window.getHeight()*2)
+	--[[
 	self.starCanvases = {}
 	for i = 1, 5 do
 		self.starCanvases[i] = love.graphics.newCanvas(love.window.getWidth()*2, love.window.getHeight()*2)
@@ -36,7 +46,7 @@ function game:init()
 				love.graphics.point(math.random(w)+.5, math.random(h)+.5)
 			end
 		end)
-	end
+	end]]
 end
 
 function game:load(file, ignoreError)
@@ -121,18 +131,41 @@ function game:draw()
     love.graphics.setColor(255, 255, 255)
 	local x, y = 0, 0
 	
+	--[[
+	love.graphics.setScissor(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 	for i = 1, #self.starCanvases do
 		if the.player.ship then
 			x, y = the.player.ship.body:getPosition()
 			
 			local divisor = (#self.starCanvases+1-i)*15
-			x, y = math.floor(x/divisor), math.floor(y/divisor)
+			--x, y = math.floor(x/divisor), math.floor(y/divisor)
 			local w, h = self.starCanvases[i]:getDimensions()
 			x = x % w
 			y = y % h
 		end
-		love.graphics.draw(self.starCanvases[i], self.starQuad, -x, -y)
+		--if i > 2 then
+			love.graphics.draw(self.starCanvases[i], self.starQuad, -x, -y)
+		--end
 	end
+	]]
+	
+	for i = 1, #self.starImages do
+		if the.player.ship then
+			x, y = the.player.ship.body:getPosition()
+			
+			local divisor = (#self.starImages+1-i)*15
+			x, y = math.floor(x/divisor), math.floor(y/divisor)
+			local w, h = self.starImages[i]:getDimensions()
+			x = x % w
+			y = y % h
+		end
+		if i > 1 then
+			love.graphics.draw(self.starImages[i], self.starQuad, -x, -y)
+		else
+			love.graphics.draw(self.starImages[i], self.nebulaQuad, 0, 0)
+		end
+	end
+	
 
     love.graphics.translate(self.translateX, self.translateY)
     -- things that should be translated
