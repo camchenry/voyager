@@ -6,15 +6,17 @@ function List:initialize(prefix, options, x, y, w, h)
 
 	self.font = font[22]
 	
-	self.prefix = prefix
+	self.prefix = prefix..':  ' -- extra space for leftButton
 	self.text = ''
 	self.options = options
 	self.selected = 1
 	
-	self.width = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
+	self.longestIndex = self:setLongestIndex() -- arrows 
+	
+	self.width = w or self.font:getWidth(self.prefix..self.text)
 	self.height = h or self.font:getHeight()
 
-	self.leftButton = Button:new("<", self.x, self.y, nil, nil, fontBold[22])
+	self.leftButton = Button:new("<", self.x+self.font:getWidth(self.prefix), self.y, nil, nil, fontBold[22])
 	self.leftButton.activated = function()
 		self:prev()
 	end
@@ -25,7 +27,7 @@ function List:initialize(prefix, options, x, y, w, h)
 end
 
 function List:draw()
-	self.rightButton.x = self.x+self.width+self.leftButton.width+10
+	self.rightButton.x = self.x+self.width+self.leftButton.width
 
 	love.graphics.setFont(self.font)
 
@@ -34,7 +36,7 @@ function List:draw()
 	
 	--love.graphics.setColor(0, 0, 0)
 	
-	love.graphics.print(self.prefix.. ': ' ..self.text, self.x+self.leftButton.width+5, self.y)
+	love.graphics.print(self.prefix..self.text, self.x, self.y)
 
 	self.leftButton:draw()
 	self.rightButton:draw()
@@ -65,6 +67,7 @@ function List:selectValue(value)
 	end
 end
 
+
 -- Takes a table and searches through all options. Selects index if a match is found
 function List:selectTable(tbl1)
 	for i = 1, #self.options do
@@ -84,18 +87,65 @@ function List:selectTable(tbl1)
 	end
 end
 
+
 -- Sets how options are displayed. ex: for resolution, 'val1 x val2', or for antialiasing, 'valx'
 function List:setText(text)
-	if not text then text = self.originalText end
+	if not text then text = self.originalText -- if no text given then use the stored value
+	else text = '    '..text end -- extra space for leftButton that is not taken into account for its value (to center it)
+	
 	self.originalText = text
+	local longestText = self.originalText
 
 	-- Use val for simple numbered options
-	if string.find(text, 'val') then text = string.gsub(text, 'val', self.options[self.selected]) end
+	if string.find(text, 'val') then
+		text = string.gsub(text, 'val', self.options[self.selected]) 
+		longestText = string.gsub(longestText, 'val', self.options[self.longestIndex])
+	end
 
 	-- Use val1, 2 etc for table options
-	if string.find(text, 'val1') then text = string.gsub(text, 'val1', self.options[self.selected][1]) end
-	if string.find(text, 'val2') then text = string.gsub(text, 'val2', self.options[self.selected][2]) end
+	if string.find(text, 'val1') then
+		text = string.gsub(text, 'val1', self.options[self.selected][1])
+		longestText = string.gsub(longestText, 'val1', self.options[self.longestIndex][1])
+	end
+	
+	if string.find(text, 'val2') then
+		text = string.gsub(text, 'val2', self.options[self.selected][2])
+		longestText = string.gsub(longestText, 'val2', self.options[self.longestIndex][2])
+	end
 	
 	self.text = text
-	self.width = w or self.font:getWidth(self.prefix.. ': ' ..self.text)
+	self.width = w or self.longestIndex and self.font:getWidth(self.prefix..longestText)  -- sets width to that of the longest possible width of all options in list
+		or self.font:getWidth(self.prefix..self.text)
+end
+
+
+-- Finds index of the longest possible width
+function List:setLongestIndex()
+	local longestIndex = nil
+	local longest = nil
+	for i, option in ipairs(self.options) do
+		local len = 0
+		
+		if type(option) == 'number' then
+			len = string.len(tostring(option))
+		elseif type(option) == 'table' then
+			for j, value in pairs(option) do
+				len = len + string.len(tostring(value))
+			end
+		elseif type(option) == 'string' then
+			len = string.len(option)
+		end
+		
+		if not longest then
+			longestIndex = i
+			longest = len
+		elseif len > longest then
+			longestIndex = i
+			longest = len
+		end
+	end
+	
+	if longestIndex and longest then
+		return longestIndex
+	end
 end
