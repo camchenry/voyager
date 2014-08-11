@@ -90,6 +90,11 @@ end
 
 
 function game:keypressed(key, isrepeat)
+    love.keyboard.setKeyRepeat(false)
+    the.system:keypressed(key, isrepeat)
+    the.player.ship:keypressed(key, isrepeat)
+    love.keyboard.setKeyRepeat(false)
+
     if key == "m" then
         state.switch(starmap)
     end
@@ -218,4 +223,5 @@ function game:draw()
 	
 	love.graphics.setColor(255, 0, 0)
 	love.graphics.print(love.timer.getFPS(), 5, 5)
+    love.graphics.print(the.system.world:getBodyCount(), 5, 40)
 end

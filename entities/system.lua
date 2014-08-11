@@ -8,6 +8,7 @@ function StarSystem:initialize(name, x, y)
     self.y = y
     self.entities = {}
     self.objects = {}
+    self.projectiles = {}
 
     self.world = love.physics.newWorld()
 end
@@ -34,6 +35,7 @@ function StarSystem:load(name)
     self.y = systemData.y
     self.objects = {}
     self.entities = {}
+    self.projectiles = {}
 
     -- purge all physics objects, except the player ship
     for i, body in pairs(self.world:getBodyList()) do
@@ -84,6 +86,14 @@ function StarSystem:closestObject(x, y, radius)
     return obj, min
 end
 
+function StarSystem:keypressed(key, isrepeat)
+    for i, entity in pairs(self.entities) do
+        if entity.keypressed ~= nil then
+            entity:keypressed(key, isrepeat, the.system.world, the.player.ship)
+        end
+    end
+end
+
 function StarSystem:update(dt)
     self.world:update(dt)
 
@@ -94,6 +104,10 @@ function StarSystem:update(dt)
     for i, entity in pairs(self.entities) do
         entity:update(dt)
     end
+
+    for i, proj in pairs(self.projectiles) do
+        proj:update(dt)
+    end
 end
 
 function StarSystem:draw()
@@ -103,5 +117,9 @@ function StarSystem:draw()
 
     for i, entity in pairs(self.entities) do
         entity:draw()
+    end
+
+    for i, proj in pairs(self.projectiles) do
+        proj:draw()
     end
 end

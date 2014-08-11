@@ -13,6 +13,7 @@ function Ship:initialize(world, controlScheme)
     self.body = love.physics.newBody(world, 27, 100, "dynamic")
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
+    self.fixture:setFilterData(1, 1, -1)
 
     -- control scheme (assume ComputerControl as default)
     self.controlScheme = controlScheme or ComputerControl
@@ -36,6 +37,8 @@ function Ship:initialize(world, controlScheme)
 
     self.jumping = false
 
+    self.weapon = Weapon:new("gun thing", 100, self)
+
     self.body:setMass(self.mass)
     self.body:setAngularDamping(self.angularDamping)
     self.body:setInertia(self.inertia)
@@ -43,6 +46,12 @@ end
 
 function Ship:update(dt)
     self.controlScheme.update(self, the.system.world, the.player.ship, dt)
+end
+
+function Ship:keypressed(key, isrepeat)
+    if self.controlScheme.keypressed ~= nil then
+        self.controlScheme.keypressed(key, isrepeat, self, the.system.world, the.player.ship)
+    end
 end
 
 -- if direction is 1, turn clockwise

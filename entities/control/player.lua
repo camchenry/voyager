@@ -13,5 +13,11 @@ PlayerControl = {
             ship:turn(1)
         end
 
+    end,
+
+    keypressed = function(key, isrepeat, ship, world, playership)
+        if key == " " then
+            ship.weapon:fire(ship, {x=love.mouse.getX(), y=love.mouse.getY()})
+        end
     end
 }

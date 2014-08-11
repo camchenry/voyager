@@ -1,8 +1,9 @@
 Weapon = class("Weapon")
 
-function Weapon:initialize(name, fireRate)
+function Weapon:initialize(name, fireRate, parentShip)
     self.name = name
     self.fireRate = fireRate or 100 -- rounds per minute
+    self.parentShip = parentShip
 
     self.heat = 0
 end
@@ -15,6 +16,8 @@ function Weapon:update(dt)
     end
 end
 
-function Weapon:fire()
-    
+function Weapon:fire(origin, target)
+    local proj = Projectile:new(self.parentShip, self, origin, target)
+
+    table.insert(the.system.projectiles, proj)
 end
