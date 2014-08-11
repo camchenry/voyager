@@ -26,8 +26,8 @@ function Radar:findLocal(x1, y1, x2, y2, iconRadius)
 		local angle = math.angle(0, 0, radarX, radarY)
 		
 		-- radius is off by a few pixels to compensate for the size of the radar dots
-		radarX = math.cos(angle) * (self.radius - iconRadius)
-		radarY = math.sin(angle) * (self.radius - iconRadius)
+		radarX = math.cos(angle) * (self.radius - iconRadius-1)
+		radarY = math.sin(angle) * (self.radius - iconRadius-1)
 	end
 	
 	return radarX, radarY
@@ -37,7 +37,7 @@ function Radar:draw()
     -- Radar circle
     love.graphics.setLineWidth(6)
     love.graphics.setColor(44, 44, 44, 255)
-    love.graphics.circle("line", self.x, self.y, self.radius+3)
+    love.graphics.circle("line", self.x, self.y, self.radius+2)
     love.graphics.setColor(44, 44, 44, 200)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 
