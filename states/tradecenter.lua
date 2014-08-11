@@ -106,12 +106,14 @@ function tradecenter:draw()
         love.graphics.print(the.player.ship:getCommodityMass(commodity)..' TONS', 450, button.y)
         love.graphics.print(self.commodityPrices[commodity]..'c', 350, button.y)
 		
+		--[[
 		for i = 1, the.player.ship:getCommodityMass(commodity) do
 			love.graphics.setColor(255, 0, 0)
 			love.graphics.rectangle('fill', 670+50*i, button.y+16, 32, 32)
 			love.graphics.setColor(255, 255, 255)
 			love.graphics.rectangle('line', 670+50*i, button.y+16, 32, 32)
 		end
+		]]
     end
 
     love.graphics.print(the.player.ship.maxCargo - the.player.ship:getCargoMass()..' TONS AVAILABLE', 450, 300)
@@ -119,21 +121,34 @@ function tradecenter:draw()
 	
 	
 	local w, h = 32, 32
-	local columns = math.floor((love.window.getWidth() - 750) / 50)
+	local columns = math.floor((600 - 300) / 50)
 	
-	local num = the.player.ship.maxCargo - the.player.ship:getCargoMass()
+	local num = the.player.ship.maxCargo -- - the.player.ship:getCargoMass()
 	
 	local rows = math.ceil(num/columns)
 	
+	local commodityMasses = {}
+	for i = 1, #self.commodities do
+		commodityMasses[i] = the.player.ship:getCommodityMass(self.commodities[i]) 
+	end
+	commodityMasses[1] = commodityMasses[1] +1 --baaaad
+	
 	for column = 1, columns do
 		for row = 1, rows do
-			local number = columns*(rows-1)+column
+			local number = columns*(row-1)+column
 			
 			if row < rows or number <= num then
 			
-				local x, y = 700+50*column, 300+8-50+50*row
+				local x, y = 250+50*column, 350+8-50+50*row
 			
 				love.graphics.setColor(167, 167, 167)
+				
+				-- baaaaad
+				if commodityMasses[4] + commodityMasses[3] + commodityMasses[2] + commodityMasses[1] <= number then love.graphics.setColor(87, 79, 94)
+				elseif commodityMasses[3] + commodityMasses[2] + commodityMasses[1]  <= number then love.graphics.setColor(147, 59, 235)
+				elseif commodityMasses[2] + commodityMasses[1] <= number then love.graphics.setColor(245, 212, 64)
+				elseif commodityMasses[1] <= number then love.graphics.setColor(255, 0, 0) end
+				
 				love.graphics.rectangle('fill', x, y, 32, 32)
 				love.graphics.setColor(255, 255, 255)
 				love.graphics.rectangle('line', x, y, 32, 32)
