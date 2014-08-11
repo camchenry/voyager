@@ -13,11 +13,8 @@ PlayerControl = {
             ship:turn(1)
         end
 
-    end,
-
-    keypressed = function(key, isrepeat, ship, world, playership)
-        if key == " " then
+        if love.keyboard.isDown(" ") then
             ship.weapon:fire(ship, {x=love.mouse.getX(), y=love.mouse.getY()})
         end
-    end
+    end,
 }

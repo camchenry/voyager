@@ -9,6 +9,7 @@ ComputerControl = {
 
         if facing then
             ship:thrustPrograde()
+            ship.weapon:fire(ship)
         end
 
     end

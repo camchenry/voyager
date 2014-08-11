@@ -9,6 +9,7 @@ function Pilot:initialize(first, last, gender)
     self.gender = gender
 
     self.ship = Ship:new(the.system.world, PlayerControl)
+    self.ship.fixture:setMask(1)
     self.location = "Sol"
     self.planet = nil
 
