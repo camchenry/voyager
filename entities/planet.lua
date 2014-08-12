@@ -18,19 +18,17 @@ function Planet:initialize()
 	
 	self.seed = math.random(1000000)
 	
-<<<<<<< HEAD
 	--self.img = love.graphics.newImage('img/planet/surface.png')
 	
 	--self.shader:send('resolution', 1)
 	--self.shader:send('width', 4)
 	--self.shader:send('height', 1)
-=======
-	self.img = love.graphics.newImage('img/planet/surface.png')
+	
+	self.img = love.graphics.newImage('img/planet/worldgen.png')
 	
 	self.shader:send('resolution', 1)
-	self.shader:send('width', 4)
-	self.shader:send('height', 1)
->>>>>>> parent of 26fb811... Revert "Added in online generated planets"
+	self.shader:send('width', 32)
+	self.shader:send('height', 8)
 	
 	self.color = {49, 193, 222}
 end
@@ -60,16 +58,11 @@ function Planet:mapPixel(x, y, r, g, b, a)
 end]]
 
 function Planet:update(dt)
-	self.xtime = self.xtime+dt/4
-<<<<<<< HEAD
-	--self.ytime = self.ytime+dt/8
-	self.shader:send('time', self.xtime)
-	--self.shader:send('ytime', self.ytime)
-	
-=======
-	self.ytime = self.ytime+dt/8
+	self.xtime = self.xtime+dt/10
+	self.ytime = self.ytime+dt/20
 	self.shader:send('xtime', self.xtime)
 	self.shader:send('ytime', self.ytime)
+	
  --[[
 	if not self.img then
 		self.imgData = love.image.newImageData(self.width, self.height)
@@ -203,6 +196,6 @@ function Planet:draw()
     love.graphics.setColor(255, 255, 255)
 	love.graphics.setShader(self.shader)
     --love.graphics.circle("fill", self.x, self.y, self.radius)
-	love.graphics.draw(self.img, self.x-self.radius, self.y-self.radius, self.width/self.img:getWidth(), self.height/self.img:getHeight())
+	love.graphics.draw(self.img, self.x-self.radius-400, self.y-self.radius-170)--, self.width/self.img:getWidth(), self.height/self.img:getHeight())
 	love.graphics.setShader()
 end
