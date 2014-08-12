@@ -12,14 +12,10 @@ PlayerControl = {
         elseif love.keyboard.isDown("d") then
             ship:turn(1)
         end
-<<<<<<< HEAD
-
         if love.keyboard.isDown(" ") then
             ship.weapon:fire(ship, {x=love.mouse.getX(), y=love.mouse.getY()})
         end
-    end,
-=======
-		
+
 		-- Automatically selects a planet if the ship is over it
 		game.selectedObject = nil
 		local x, y = ship.body:getPosition()
@@ -31,5 +27,4 @@ PlayerControl = {
 			end
 		end
     end
->>>>>>> 2f23d84ac57ddfd33a79e15435ea0acc1d6c3344
 }
