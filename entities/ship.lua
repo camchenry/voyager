@@ -15,6 +15,7 @@ function Ship:initialize(world, controlScheme)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
     self.fixture:setMask(2) -- assume don't collide with non-player bullets (aka bullets made by this ship)
     self.fixture:setCategory(3)
+    self.fixture:setUserData("ship")
 
     -- control scheme (assume ComputerControl as default)
     self.controlScheme = controlScheme or ComputerControl

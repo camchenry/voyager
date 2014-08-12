@@ -108,6 +108,12 @@ function StarSystem:update(dt)
     for i, proj in pairs(self.projectiles) do
         proj:update(dt)
     end
+
+    for i, proj in pairs(self.projectiles) do
+        if proj.fixture:getUserData() == "destroy" then
+            proj:destroy()
+        end
+    end
 end
 
 function StarSystem:draw()

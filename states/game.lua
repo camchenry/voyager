@@ -14,7 +14,9 @@ function game:init()
 
     local ship = the.system:addEntity(Ship:new())
     ship.body:setPosition(0, 0)
-	
+
+    self.collision = {}
+    the.system.world:setCallbacks(collision.beginContact, collision.endContact, collision.preSolve, collision.postSolve)
 	
 	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 256, 256)
 	self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
@@ -79,7 +81,6 @@ end
 
 function game:update(dt)
     the.system:update(dt)
-
     the.player.ship:update(dt)
 
     self.HUD:update(dt)

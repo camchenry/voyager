@@ -32,14 +32,20 @@ function Projectile:initialize(parentShip, parentWeapon, origin)
     else
         self.fixture:setCategory(2)
     end
+
+    self.fixture:setUserData("projectile")
+end
+
+function Projectile:destroy()
+    self.body:destroy()
+    table.remove(the.system.projectiles, searchTable(the.system.projectiles, self))
 end
 
 function Projectile:update(dt)
     self.life = self.life - dt
 
     if self.life <= 0 then
-        self.body:destroy()
-        table.remove(the.system.projectiles, searchTable(the.system.projectiles, self))
+        self:destroy()
     end
 end
 
