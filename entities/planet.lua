@@ -10,6 +10,15 @@ function Planet:initialize()
     self.radius = 90
     self.width = self.radius*2
     self.height = self.radius*2
+	
+	--self.shader = love.graphics.newShader('shaders/planet.glsl')
+	--self.shader:send('rand', math.random())
+	
+	self.seed = math.random(1000000)
+	
+	self.img = love.graphics.newImage('img/download.png')
+	
+	self.color = {49, 193, 222}
 end
 
 function Planet:canLand(ship)
@@ -26,11 +35,26 @@ function Planet:isHabitable()
     return true
 end
 
+
+
+function Planet:mapPixel(x, y, r, g, b, a)
+    if r == 0 and g == 0 and b == 0 and a == 0 then
+		r, g, b, a = self.imgData:getPixel(x+1, y+1)
+	end
+	
+    return r, g, b, a
+end
+
 function Planet:update(dt)
 
 end
 
+
+
 function Planet:draw()
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", self.x, self.y, self.radius)
+	--love.graphics.setShader(self.shader)
+    --love.graphics.circle("fill", self.x, self.y, self.radius)
+	--love.graphics.setShader()
+	love.graphics.draw(self.img, self.x-self.radius, self.y-self.radius, 0, self.width/self.img:getWidth(), self.height/self.img:getHeight())
 end
