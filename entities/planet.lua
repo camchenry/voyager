@@ -10,6 +10,9 @@ function Planet:initialize()
     self.radius = 90
     self.width = self.radius*2
     self.height = self.radius*2
+	
+	--self.shader = love.graphics.newShader('shaders/planet.glsl')
+	--self.shader:send('rand', math.random())
 end
 
 function Planet:canLand(ship)
@@ -32,5 +35,7 @@ end
 
 function Planet:draw()
     love.graphics.setColor(255, 255, 255)
+	--love.graphics.setShader(self.shader)
     love.graphics.circle("fill", self.x, self.y, self.radius)
+	--love.graphics.setShader()
 end
