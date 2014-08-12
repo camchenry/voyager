@@ -1,30 +1,30 @@
-extern number rand;
+const number pi = 3.14159265;
+const number pi2 = 2.0 * pi;
 
-//varying vec4 vpos;
+extern number time;
+extern number resolution = 1;
 
-#ifdef VERTEX
-vec4 position( mat4 transform_projection, vec4 vertex_position )
+extern number width = 1;
+extern number height = 1;
+			  
+vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pixel_coords)
 {
-	//vpos = vertex_position;
-	
-	return transform_projection * vertex_position;
-}
-#endif
+   vec2 p = 2.0 * (tc - 0.5);
+   
+   number r = sqrt(p.x*width*p.x + p.y*height*p.y);
 
-#ifdef PIXEL
-vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords )
-{
-    vec4 texcolor = Texel(texture, texture_coords);
-	
-	//texcolor.r = 0;
-	//texcolor.g = 0;
-	//texcolor.b = 0;
-	
-    //return texcolor;// * color;
-	
-	
-	texcolor.r = rand*texture_coords.x;
-	
-	return texcolor * color;
+   if (r > 1.0) discard;
+   
+   number d = r != 0.0 ? asin(r) / r : 0.0;
+			
+   vec2 p2 = d * p * resolution;
+   
+   number x3 = mod(p2.x / (pi2) + 0.5 + time/8, 1.0);
+   number y3 = p2.y / (pi2) + 0.5;
+   
+   vec2 newCoord = vec2(x3, y3);
+   
+   vec4 sphereColor = color * Texel(texture, newCoord);
+			
+   return sphereColor;
 }
-#endif
