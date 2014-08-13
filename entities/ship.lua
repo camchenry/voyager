@@ -19,6 +19,7 @@ function Ship:initialize(world, controlScheme)
 
     -- control scheme (assume ComputerControl as default)
     self.controlScheme = controlScheme or ComputerControl
+    self.controlScheme = self.controlScheme:new(self, the.system.world)
 
     -- physics properties
     self.mass = 3.25
@@ -47,7 +48,7 @@ function Ship:initialize(world, controlScheme)
 end
 
 function Ship:update(dt)
-    self.controlScheme.update(self, the.system.world, the.player.ship, dt)
+    self.controlScheme:update(dt)
     self.weapon:update(dt)
 end
 

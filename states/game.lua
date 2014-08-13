@@ -25,30 +25,6 @@ function game:init()
 		self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
 		self.starImages[i]:setWrap('repeat')
 	end
-	
-	
-	--self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*4, love.window.getHeight()*4, love.window.getWidth()*2, love.window.getHeight()*2)
-	--[[
-	self.starCanvases = {}
-	for i = 1, 5 do
-		self.starCanvases[i] = love.graphics.newCanvas(love.window.getWidth()*2, love.window.getHeight()*2)
-		self.starCanvases[i]:setWrap('repeat')
-		self.starCanvases[i]:renderTo(function()
-			love.graphics.setColor(255, 255, 255)
-			local w, h = self.starCanvases[i]:getDimensions()
-			
-			love.graphics.setPointStyle('smooth')
-			
-			love.graphics.setPointSize(i)
-			local num = math.random(200/i, 2000/i)
-			for j = 1, num do
-				if j < num/3 then love.graphics.setColor(math.random(255, 204), math.random(255, 230), math.random(255, 232))
-				elseif j < num*2/3 then love.graphics.setColor(math.random(255, 237), math.random(255, 227), math.random(255, 216))
-				else love.graphics.setColor(math.random(255, 220), math.random(255, 200), math.random(255, 232)) end
-				love.graphics.point(math.random(w)+.5, math.random(h)+.5)
-			end
-		end)
-	end]]
 end
 
 function game:load(file, ignoreError)
@@ -136,24 +112,6 @@ end
 function game:draw()
     love.graphics.setColor(255, 255, 255)
 	local x, y = 0, 0
-	
-	--[[
-	love.graphics.setScissor(0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-	for i = 1, #self.starCanvases do
-		if the.player.ship then
-			x, y = the.player.ship.body:getPosition()
-			
-			local divisor = (#self.starCanvases+1-i)*15
-			--x, y = math.floor(x/divisor), math.floor(y/divisor)
-			local w, h = self.starCanvases[i]:getDimensions()
-			x = x % w
-			y = y % h
-		end
-		--if i > 2 then
-			love.graphics.draw(self.starCanvases[i], self.starQuad, -x, -y)
-		--end
-	end
-	]]
 	
 	for i = 1, #self.starImages do
 		if the.player.ship then
