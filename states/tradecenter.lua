@@ -63,6 +63,7 @@ function tradecenter:init()
 	self.prices = {}
 	self.scale = 1
 	self.samples = 20
+	self.translate = 0
 	for i = 1, self.samples do
 		self.prices[i] = love.math.noise(i/self.scale)
 	end
@@ -73,17 +74,31 @@ function tradecenter:enter()
 end
 
 function tradecenter:update(dt)
+	if love.keyboard.isDown('q') then
+		self.prices = {}
+		self.translate = self.translate + .01
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
+		end
+	elseif love.keyboard.isDown('a') then
+		self.prices = {}
+		self.translate = self.translate - .01
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
+		end
+	end
+
 	if love.keyboard.isDown('e') then
 		self.prices = {}
 		self.samples = self.samples+.01
 		for i = 1, math.floor(self.samples) do
-			self.prices[i] = love.math.noise(i/self.scale)
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
 		end
 	elseif love.keyboard.isDown('d') then
 		self.prices = {}
 		self.samples = self.samples-.01
 		for i = 1, math.floor(self.samples) do
-			self.prices[i] = love.math.noise(i/self.scale)
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
 		end
 	end
 
@@ -91,13 +106,13 @@ function tradecenter:update(dt)
 		self.prices = {}
 		self.scale = self.scale+.001
 		for i = 1, math.floor(self.samples) do
-			self.prices[i] = love.math.noise(i/self.scale)
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
 		end
 	elseif love.keyboard.isDown('s') then
 		self.prices = {}
 		self.scale = self.scale-.001
 		for i = 1, math.floor(self.samples) do
-			self.prices[i] = love.math.noise(i/self.scale)
+			self.prices[i] = love.math.noise((i/self.scale)+self.translate)
 		end
 	end
 end
@@ -208,5 +223,6 @@ function tradecenter:draw()
 	end
 	
 	love.graphics.print('nois sc '..self.scale, x, y+height+10)
-	love.graphics.print('samples '..math.floor(self.samples), x, y+height+40)
+	love.graphics.print('samples '..math.floor(self.samples), x, y+height+35)
+	love.graphics.print('translate '..self.translate, x, y+height+60)
 end
