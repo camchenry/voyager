@@ -24,7 +24,7 @@ function Planet:initialize()
 	--self.shader:send('width', 4)
 	--self.shader:send('height', 1)
 	
-	self.img = love.graphics.newImage('img/planet/worldgen.png')
+	self.img = love.graphics.newImage('img/planet/planet.bmp')
 	
 	self.shader:send('resolution', 1)
 	self.shader:send('width', 32)
