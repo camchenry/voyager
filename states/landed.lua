@@ -7,6 +7,12 @@ landed.items = {
             state.switch(tradecenter)
         end,
     },
+	{
+        title = "BBS",
+        action = function()
+            state.switch(bbs)
+        end,
+    },
     {
         title = "LEAVE",
         action = function()

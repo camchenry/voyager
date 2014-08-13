@@ -1,8 +1,10 @@
 -- entities
+require 'entities.ui.bbs'
 require 'entities.ui.button'
 require 'entities.ui.checkbox'
 require 'entities.ui.input'
 require 'entities.ui.list'
+require 'entities.ui.sidebarButton'
 
 require 'entities.control.player'
 require 'entities.control.computer'
