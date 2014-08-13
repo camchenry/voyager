@@ -57,6 +57,15 @@ function tradecenter:init()
 
     self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
     table.insert(self.buttons, self.leaveButton)
+	
+	
+	
+	self.prices = {}
+	self.scale = 1
+	self.samples = 20
+	for i = 1, self.samples do
+		self.prices[i] = love.math.noise(i/self.scale)
+	end
 end
 
 function tradecenter:enter()
@@ -64,7 +73,33 @@ function tradecenter:enter()
 end
 
 function tradecenter:update(dt)
+	if love.keyboard.isDown('e') then
+		self.prices = {}
+		self.samples = self.samples+.01
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise(i/self.scale)
+		end
+	elseif love.keyboard.isDown('d') then
+		self.prices = {}
+		self.samples = self.samples-.01
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise(i/self.scale)
+		end
+	end
 
+	if love.keyboard.isDown('w') then
+		self.prices = {}
+		self.scale = self.scale+.001
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise(i/self.scale)
+		end
+	elseif love.keyboard.isDown('s') then
+		self.prices = {}
+		self.scale = self.scale-.001
+		for i = 1, math.floor(self.samples) do
+			self.prices[i] = love.math.noise(i/self.scale)
+		end
+	end
 end
 
 function tradecenter:keypressed(key, isrepeat)
@@ -159,4 +194,19 @@ function tradecenter:draw()
 	love.graphics.print(columns..'x'..rows, 5, 5)
 
     love.graphics.print(the.player.credits..' credits', 25, 400)
+	
+	
+	-- market noise test
+	love.graphics.setColor(122, 122, 122)
+	local x, y = love.window.getWidth()-220, 20
+	local width, height = 200, 100
+	love.graphics.rectangle('fill', x, y, width, height)
+	
+	love.graphics.setColor(255, 0, 0)
+	for i = 1, #self.prices-1 do
+		love.graphics.line(x+width/#self.prices*i, y+self.prices[i]*height, x+width/#self.prices*(i+1), y+self.prices[i+1]*height)
+	end
+	
+	love.graphics.print('nois sc '..self.scale, x, y+height+10)
+	love.graphics.print('samples '..math.floor(self.samples), x, y+height+40)
 end
