@@ -28,8 +28,15 @@ function sidebarButton:initialize(text, x, y, w, h, fontSize, activated)
     self.activated = activated or function() end
 end
 
-function sidebarButton:mousepressed(x, y, msidebarButton)
-    if self:hover() and msidebarButton == "l" then
+function sidebarButton:update()
+	if self:hover() then
+		self.hovered(self.index)
+	end
+end
+
+-- Not used currently. Could be used to 'lock' a mission in the sidebar
+function sidebarButton:mousepressed(x, y, Button)
+    if self:hover() and msButton == "l" then
         self.activated()
     end
 end
@@ -41,7 +48,6 @@ function sidebarButton:draw(active)
 
     local hover = self:hover()
 	if hover then
-		self.hovered(self.index)
 		love.graphics.setColor(self.activebg)
 	elseif active then
 		love.graphics.setColor(46, 167, 232)

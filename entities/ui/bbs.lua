@@ -11,9 +11,11 @@ function BBS:initialize(options)
 	
 	self.optionsDisplayed = 5
 	
-	self.itemWidth = self.width*2/5
+	self.itemWidth = self.width*1/5
 	self.itemHeight = self.height/5
 	self.font = font[self.itemHeight/3]
+	
+	self.returnMission = function() end
 	
 	self.sidebarItems = {}
 	for i, option in ipairs(self.options) do
@@ -30,9 +32,26 @@ function BBS:initialize(options)
 		self.sidebarItems[i] = button
 	end
 	
+	self.acceptButton = Button:new('Accept', 0, 0)
+	self.acceptButton:centerAround(self.x+self.width-self.acceptButton.width/2-10, self.y+self.height-self.acceptButton.height/2-10)
+	self.acceptButton.active = {74, 232, 80}
+	self.acceptButton.activated = function()
+		self.returnMission(self.options[self.activeItem])
+	end
+	
 	self.activeItem = 1
 	
 	self.activeColor = {74, 232, 80}
+end
+
+function BBS:update()
+	for i, button in ipairs(self.sidebarItems) do
+		button:update()
+	end
+end
+
+function BBS:mousepressed(x, y, mbutton)
+	self.acceptButton:mousepressed(x, y, mbutton)
 end
 
 function BBS:draw()
@@ -57,4 +76,6 @@ function BBS:draw()
 	
 	local option = self.options[self.activeItem]
 	love.graphics.printf(option.name..'\n'..option.pay..'\n'..option.desc, x+5, y+5, self.width-self.itemWidth-10, 'left')
+	
+	self.acceptButton:draw()
 end

@@ -25,8 +25,7 @@ function love.load()
 
 	local loadedOptions = options:load()
 	if not loadedOptions then
-		--love.window.setMode(1024, 768, {fullscreen = true}) -- default
-		love.window.setMode(1024, 768) -- default
+		love.window.setMode(1024, 768, {fullscreen = false}) -- default
 	end
 
     the = {}
