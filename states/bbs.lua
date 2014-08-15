@@ -3,6 +3,8 @@ bbs = {}
 function bbs:init()
 	local bbsOptions = require 'data.missions'
 	self.bbsList = BBS:new(bbsOptions)
+	
+	-- returns mission data when accepted
 	self.bbsList.returnMission = function (mission)
 		the.player.mission = mission
 		error(dump(the.player.mission))

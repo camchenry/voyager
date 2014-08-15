@@ -9,7 +9,7 @@ function BBS:initialize(options)
 	self.x = love.window.getWidth()/2 - self.width/2
 	self.y = love.window.getHeight()/2 - self.height/2
 	
-	self.optionsDisplayed = 5
+	self.optionsDisplayed = 5 -- max number of options on a bbs
 	
 	self.itemWidth = self.width*1/5
 	self.itemHeight = self.height/5
@@ -22,11 +22,10 @@ function BBS:initialize(options)
 		local button = sidebarButton:new(option.name, self.x, self.y+self.itemHeight*(i-1), self.itemWidth, self.itemHeight)
 		button.bg = {127, 127, 127}
 		self.outlineColor = {236, 236, 236}
-		button.outline = true
-		button.index = i
+		button.index = i -- sets the index so it can be returned later
 		
 		button.hovered = function (index)
-			self.activeItem = index
+			self.activeItem = index -- returns the index of the selected option
 		end
 		
 		self.sidebarItems[i] = button
