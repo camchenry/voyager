@@ -24,6 +24,15 @@ function Condition:update(creatureAI)
     return self.condition(creatureAI) and READY or FAILED
 end
 
+Inverter = class("Inverter")
+function Inverter:initialize(cond)
+    self.condition = cond.condition
+end
+
+function Inverter:update(creatureAI)
+    return not self.condition(creatureAI) and READY or FAILED
+end
+
 Selector = class("Selector")
 function Selector:initialize(children)
     self.children = children
@@ -111,34 +120,74 @@ end
 
 function ComputerControl:createAI()
     local isShipFacingPlayer = Condition(function()
-        return self.ship:facing({x=the.player.ship.body:getX(), y=the.player.ship.body:getY()})
+        return self.ship:facing(the.player.ship)
     end)
-    local isNotShipFacingPlayer = Condition(function()
-        return not self.ship:facing({x=the.player.ship.body:getX(), y=the.player.ship.body:getY()})
+    local isNotShipFacingPlayer = Inverter(isShipFacingPlayer)
+    local isNearPlayer = Condition(function()
+        local x, y = self.ship.body:getPosition()
+        local x2, y2 = the.player.ship.body:getPosition()
+        return math.sqrt((x2 - x)^2 + (y2 - y)^2) < 250
     end)
-    local updated = false
+    local isPlayerAttacking = Condition(function()
+        return the.player.ship:facing(self.ship, math.rad(30))
+    end)
 
     local doFaceThePlayer = Action(function()
         self.ship:turnToward(the.player.ship)
-        return self.ship:facing({x=the.player.ship.body:getX(), y=the.player.ship.body:getY()})
+        self.ship:turnToward(the.player.ship)
+        return self.ship:facing(the.player.ship)
     end)
     local doFireWeapon = Action(function()
         self.ship.weapon:fire(self.ship)
         return true
     end)
+    local doMoveTowardPlayer = Action(function()
+        self.ship:thrustPrograde()
+        self.ship:thrustPrograde()
+        self.ship:thrustPrograde()
+        return true
+    end)
+    local doEvade = Action(function()
+        self.ship:thrustRetrograde()
+        self.ship:thrustRetrograde()
+        self.ship:thrustRetrograde()
+        return true
+    end)
 
-    self.behavior = Selector{
+    self.seekAndDestroy = Selector{
         Sequence{
-            isNotShipFacingPlayer,
-            doFaceThePlayer
+            isPlayerAttacking,
+            doEvade
         },
         Sequence{
+            doFaceThePlayer,
+            doMoveTowardPlayer,
             isShipFacingPlayer,
             doFireWeapon
         }
     }
+
+    self.stayCloseAndFollow = Selector{
+        Sequence{
+            doFaceThePlayer,
+            Inverter(isNearPlayer),
+            doMoveTowardPlayer,
+        }
+    }
+
+    self.behavior = self.stayCloseAndFollow
 end
 
 function ComputerControl:update(dt)
-    self.behavior:update()
+    self.behavior:update() 
+end
+
+function ComputerControl:keypressed(key, isrepeat)
+    if key == "b" then
+        if self.behavior == self.stayCloseAndFollow then
+            self.behavior = self.seekAndDestroy
+        else
+            self.behavior = self.stayCloseAndFollow
+        end
+    end
 end

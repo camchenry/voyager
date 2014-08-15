@@ -180,7 +180,8 @@ function game:draw()
         love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
     end
 	
-	love.graphics.setColor(255, 0, 0)
+    love.graphics.setFont(font[18])
+	love.graphics.setColor(255, 255, 255)
 	love.graphics.print(love.timer.getFPS(), 5, 5)
     love.graphics.print(the.system.world:getBodyCount(), 5, 40)
 end

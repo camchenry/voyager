@@ -10,7 +10,7 @@ function Ship:initialize(world, controlScheme)
     self.height = 50
 
     -- physics objects
-    self.body = love.physics.newBody(world, 27, 100, "dynamic")
+    self.body = love.physics.newBody(world, 100, 100, "dynamic")
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
     self.fixture:setMask(2) -- assume don't collide with non-player bullets (aka bullets made by this ship)
@@ -23,11 +23,11 @@ function Ship:initialize(world, controlScheme)
 
     -- physics properties
     self.mass = 3.25
-    self.torque = 250
-    self.angularDamping = 20
-    self.inertia = 10 -- more inertia = more resistance to force
-    self.speed = 250
-    self.maxSpeed = 300
+    self.torque = 450
+    self.angularDamping = 15
+    self.inertia = 13 -- more inertia = more resistance to force
+    self.speed = 500
+    self.maxSpeed = 225
 
     -- ship properties
     self.maxCargo = 20
@@ -50,11 +50,15 @@ end
 function Ship:update(dt)
     self.controlScheme:update(dt)
     self.weapon:update(dt)
+
+    if not self.jumping then
+        self:limitSpeed()
+    end
 end
 
 function Ship:keypressed(key, isrepeat)
     if self.controlScheme.keypressed ~= nil then
-        self.controlScheme.keypressed(key, isrepeat, self, the.system.world, the.player.ship)
+        self.controlScheme:keypressed(key, isrepeat)
     end
 end
 
@@ -93,19 +97,53 @@ function Ship:turnToward(target)
     end
 end
 
+function Ship:normalizeAngle(angle)
+    while angle < -math.pi do
+        angle = angle + 2*math.pi
+    end
+
+    while angle > math.pi do
+        angle = angle - 2*math.pi
+    end
+
+    return angle
+end
+
 function Ship:facing(target, tolerance)
     -- tolerance for how close it has to be to target angle
-    tolerance = tolerance or math.rad(10)
+    tolerance = tolerance or math.rad(5)
 
-    local angleToTarget = math.atan2(target.y, target.x)
-    angleToTarget = angleToTarget % (2*math.pi)
+    local targX, targY = target.x or target.body:getX(), target.y or target.body:getY()
+    local shipX, shipY = self.body:getPosition()
 
-    local shipAngle = self.body:getAngle() % (2*math.pi)
+    local angleToTarget = math.atan2(targX - shipX, targY - shipY)
+    angleToTarget = self:normalizeAngle(angleToTarget)
 
-    -- the absolute difference between current rotation and target angle
-    local difference = math.abs(shipAngle - angleToTarget)
+    local shipAngle = -self.body:getAngle()
+    shipAngle = self:normalizeAngle(shipAngle)
 
-    return difference <= tolerance
+    local difference = shipAngle - angleToTarget
+    difference = self:normalizeAngle(difference) + math.pi/2
+
+    return math.abs(difference) <= tolerance, difference
+end
+
+function Ship:limitSpeed()
+    local x, y = self.body:getLinearVelocity()
+
+    if x > self.maxSpeed then
+        x = self.maxSpeed
+    elseif x < -self.maxSpeed then
+        x = -self.maxSpeed
+    end
+
+    if y > self.maxSpeed then
+        y = self.maxSpeed
+    elseif y < -self.maxSpeed then
+        y = -self.maxSpeed
+    end
+
+    self.body:setLinearVelocity(x, y)
 end
 
 function Ship:thrustPrograde()
