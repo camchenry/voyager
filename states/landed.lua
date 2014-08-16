@@ -30,7 +30,7 @@ function landed:init()
 end
 
 function landed:enter()
-    
+    game.missionController:checkCompletion()
 end
 
 function landed:update(dt)

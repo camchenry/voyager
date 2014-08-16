@@ -3,31 +3,25 @@ local MISSIONS = {}
 MISSIONS[1] = {
 	name = 'Delivery',
 	pay = 20000,
-	desc = 'Take a package to Earth in the Sol system.',
+	desc = 'Take a package to Mars in the Sol system.',
+	start = 'Earth',
+	destination = 'Mars',
 }
 
 MISSIONS[2] = {
-	name = 'Bounty',
+	name = 'Delivery',
 	pay = 20000,
-	desc = 'Please help, my homeworld Mars is being attacked by some bandits!'
+	desc = 'Take a package to Belinov in Proxima Centauri.',
+	start = 'Earth',
+	destination = 'Belinov',
 }
 
 MISSIONS[3] = {
-	name = 'Rescue',
-	pay = 20000,
-	desc = 'Please recover my stolen cargo load from the bandits that stole it from me, they should be on Mars.'
-}
-
-MISSIONS[4] = {
-	name = 'Rescue',
-	pay = 20000,
-	desc = 'A civilian is being held hostage in the Bandit Space Station, save them!'
-}
-
-MISSIONS[5] = {
 	name = 'Delivery',
 	pay = 20000,
-	desc = 'Take a package to Mars in the Sol system.',
+	desc = 'I need someone to take this here package to Belinov in Proxima Centauri',
+	start = 'Mars',
+	destination = 'Belinov',
 }
 
 return MISSIONS

@@ -1,16 +1,25 @@
 bbs = {}
 
 function bbs:init()
-	local bbsOptions = require 'data.missions'
+	self.missionData = require 'data.missions'
+	
+	self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
+end
+
+function bbs:enter()
+	local bbsOptions = {}
+	for k, mission in pairs(self.missionData) do
+		if mission.start == the.player.planet.name then
+			table.insert(bbsOptions, mission)
+		end
+	end
+	
 	self.bbsList = BBS:new(bbsOptions)
 	
 	-- returns mission data when accepted
 	self.bbsList.returnMission = function (mission)
-		the.player.mission = mission
-		error(dump(the.player.mission))
+		game.missionController:newMission(mission)
 	end
-	
-	self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
 end
 
 function bbs:update()

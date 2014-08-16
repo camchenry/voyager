@@ -12,8 +12,6 @@ function Pilot:initialize(first, last, gender)
     self.ship.fixture:setMask(1)
     self.location = "Sol"
     self.planet = nil
-	
-	self.mission = nil
 
     self.credits = 25000
 end

@@ -3,6 +3,8 @@ game = {}
 function game:init()
     -- the system will be changed to match whichever system the player is in
     the.system:load(the.player.location)
+	
+	self.missionController = MissionController:new()
 
     self.HUD = HUD:new()
     self.HUD:addWidget(Radar:new())
