@@ -69,6 +69,9 @@ function StarSystem:entered()
             tradecenter.commodityPrices[comm] = tradecenter.commodityPrices[comm] + math.random(-50, 50)
         end
     end
+
+    local ship = the.system:addEntity(Ship:new())
+    ship.body:setPosition(math.random(-500, 500), math.random(-500, 500))
 end
 
 -- finds closest object to x, y within radius

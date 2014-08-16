@@ -6,8 +6,13 @@ Ship = class("Ship")
 function Ship:initialize(world, controlScheme)
     if world == nil and the.system.world ~= nil then world = the.system.world end
 
-    self.width = 150
-    self.height = 50
+    self.testShipImage = love.graphics.newImage('img/ship.png')
+
+    self.scaleX = 0.75
+    self.scaleY = 0.75
+
+    self.width = self.testShipImage:getWidth()*self.scaleX
+    self.height = self.testShipImage:getHeight()*self.scaleY
 
     -- physics objects
     self.body = love.physics.newBody(world, 100, 100, "dynamic")
@@ -38,9 +43,14 @@ function Ship:initialize(world, controlScheme)
         ["Metal"] = 0,
     }
 
-    self.jumping = false
+    -- ship combat properties
+    self.hull = 1000
+    self.maxHull = 1000
 
-    self.weapon = Weapon:new("gun thing", 200, self)
+    self.jumping = false
+    self.destroyed = false
+
+    self.weapon = Weapon:new("gun thing", 55, 200, 5, self)
 
     self.body:setMass(self.mass)
     self.body:setAngularDamping(self.angularDamping)
@@ -48,6 +58,8 @@ function Ship:initialize(world, controlScheme)
 end
 
 function Ship:update(dt)
+    if self.destroyed then self:destroy() return end
+
     self.controlScheme:update(dt)
     self.weapon:update(dt)
 
@@ -189,15 +201,30 @@ function Ship:removeCargo(commodity, amount)
     end
 end
 
-function Ship:draw()
-    -- placeholder
-    love.graphics.setColor(127, 127, 127)
-    love.graphics.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+function Ship:takeDamage(projectile)
+    self.hull = self.hull - projectile.parentWeapon.damage
 
-    love.graphics.setColor(255, 0, 0)
-    local points = {self.body:getWorldPoints(
-        self.width, 
-        0
-    )}
-    love.graphics.line(self.body:getX(), self.body:getY(), points[1], points[2])
+    if self.hull <= 0 then
+        self.hull = 0
+        self.destroyed = true
+    end
+end
+
+function Ship:destroy()
+    local i = searchTable(the.system.entities, self)
+    if i ~= nil then
+        table.remove(the.system.entities, i)
+    end
+
+    self.body:destroy()
+end
+
+function Ship:draw()
+    if self.destroyed then return end
+
+    --love.graphics.setColor(127, 127, 127)
+    --love.graphics.polygon("fill", self.body:getWorldPoints(self.shape:getPoints()))
+    love.graphics.setColor(255, 255, 255)
+
+    love.graphics.draw(self.testShipImage, self.body:getX() , self.body:getY(), self.body:getAngle()+math.pi/2, self.scaleX, self.scaleY, self.testShipImage:getWidth()/2, self.testShipImage:getHeight()/2)
 end

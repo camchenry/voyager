@@ -129,11 +129,11 @@ function ComputerControl:createAI()
         return math.sqrt((x2 - x)^2 + (y2 - y)^2) < 250
     end)
     local isPlayerAttacking = Condition(function()
-        return the.player.ship:facing(self.ship, math.rad(30))
+        if the.player.ship.destroyed then return false end
+        return the.player.ship:facing(self.ship, math.rad(35))
     end)
 
     local doFaceThePlayer = Action(function()
-        self.ship:turnToward(the.player.ship)
         self.ship:turnToward(the.player.ship)
         return self.ship:facing(the.player.ship)
     end)
@@ -157,6 +157,7 @@ function ComputerControl:createAI()
     self.seekAndDestroy = Selector{
         Sequence{
             isPlayerAttacking,
+            isNearPlayer,
             doEvade
         },
         Sequence{
@@ -175,11 +176,17 @@ function ComputerControl:createAI()
         }
     }
 
+    self.none = Selector{}
+
     self.behavior = self.stayCloseAndFollow
 end
 
 function ComputerControl:update(dt)
-    self.behavior:update() 
+    self.behavior:update()
+
+    if the.player.ship.destroyed then
+        self.behavior = self.none
+    end
 end
 
 function ComputerControl:keypressed(key, isrepeat)

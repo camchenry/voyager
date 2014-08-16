@@ -16,12 +16,14 @@ function Projectile:initialize(parentShip, parentWeapon, origin)
 
     local angle = self.parentShip.body:getAngle()
 
+    local randAngle = math.rad(math.random(-self.parentWeapon.spread, self.parentWeapon.spread))
+
     self.body = love.physics.newBody(the.system.world, origX, origY, "dynamic")
     local vx, vy = self.parentShip.body:getLinearVelocity()
-    local velX = 750*math.cos(angle)+vx
-    local velY = 750*math.sin(angle)+vy
+    local velX = 750*math.cos(angle+randAngle)+vx
+    local velY = 750*math.sin(angle+randAngle)+vy
     self.body:setLinearVelocity(velX, velY)
-    self.body:setAngle(angle)
+    self.body:setAngle(angle+randAngle)
     self.body:setMass(0.01)
     self.body:setBullet(true)
     self.shape = love.physics.newRectangleShape(self.width, self.height)

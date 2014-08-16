@@ -1,8 +1,10 @@
 Weapon = class("Weapon")
 
-function Weapon:initialize(name, fireRate, parentShip)
+function Weapon:initialize(name, damage, fireRate, spread, parentShip)
     self.name = name
+    self.damage = damage or 50 -- hull points?
     self.fireRate = fireRate or 100 -- rounds per minute
+    self.spread = spread or 5 -- degrees (converted to radians)
     self.parentShip = parentShip
 
     self.heat = 0

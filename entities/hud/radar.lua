@@ -41,8 +41,8 @@ function Radar:draw()
     love.graphics.setColor(44, 44, 44, 200)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 
-	
-	
+    if the.player.ship.destroyed then return end
+    
 	local x, y = the.player.ship.body:getPosition() -- Location of the ship in world coordinates
 	
     -- Radar objects and entities

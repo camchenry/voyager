@@ -1,23 +1,17 @@
 game = {}
 
 function game:init()
+<<<<<<< HEAD
     -- the system will be changed to match whichever system the player is in
     the.system:load(the.player.location)
 	
 	self.missionController = MissionController:new()
 
+=======
+>>>>>>> added ship damage, added weapon spread, changed ship image to a ship sketch, added ship damage notifier, more AI conditions, and other improvements
     self.HUD = HUD:new()
     self.HUD:addWidget(Radar:new())
 
-    self.selectedObject = nil
-
-    self.translateX = 0
-    self.translateY = 0
-
-    local ship = the.system:addEntity(Ship:new())
-    ship.body:setPosition(0, 0)
-
-    self.collision = {}
     the.system.world:setCallbacks(collision.beginContact, collision.endContact, collision.preSolve, collision.postSolve)
 	
 	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 256, 256)
@@ -27,6 +21,17 @@ function game:init()
 		self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
 		self.starImages[i]:setWrap('repeat')
 	end
+end
+
+function game:enter()
+    -- the system will be changed to match whichever system the player is in
+    the.system:load(the.player.location)
+    the.system:entered()
+
+    self.selectedObject = nil
+
+    self.translateX = 0
+    self.translateY = 0
 end
 
 function game:load(file, ignoreError)
@@ -53,25 +58,29 @@ function game:load(file, ignoreError)
     return data, ok
 end
 
-function game:enter()
-    
-end
-
 function game:update(dt)
+    if not the.player.ship.destroyed then
+        self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
+        self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
+    end
+
     the.system:update(dt)
-    the.player.ship:update(dt)
+    if not the.player.ship.destroyed then
+        the.player.ship:update(dt)
+    else
+        wait(2, state.switch, menu)
+    end
 
     self.HUD:update(dt)
-
-    self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
-    self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
 end
 
 
 function game:keypressed(key, isrepeat)
     love.keyboard.setKeyRepeat(false)
     the.system:keypressed(key, isrepeat)
-    the.player.ship:keypressed(key, isrepeat)
+    if not the.player.ship.destroyed then
+        the.player.ship:keypressed(key, isrepeat)
+    end
     love.keyboard.setKeyRepeat(false)
 
     if key == "m" then
@@ -116,7 +125,7 @@ function game:draw()
 	local x, y = 0, 0
 	
 	for i = 1, #self.starImages do
-		if the.player.ship then
+		if the.player.ship and not the.player.ship.destroyed then
 			x, y = the.player.ship.body:getPosition()
 			
 			local divisor = (#self.starImages+1-i)*15
@@ -145,13 +154,27 @@ function game:draw()
     end
 
     the.system:draw()
-    the.player.ship:draw()
+    if not the.player.ship.destroyed then
+        the.player.ship:draw()
+    end
 
     love.graphics.origin()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
 
     self.HUD:draw()
+
+    local ratio = the.player.ship.hull / the.player.ship.maxHull
+
+    love.graphics.setColor(127, 127, 127, 33)
+    love.graphics.rectangle("fill", love.window.getWidth()/2-250, love.window.getHeight()-55, 250*2, 20)
+    love.graphics.setColor(255, 66, 33, 127)
+    love.graphics.rectangle("fill", love.window.getWidth()/2-250, love.window.getHeight()-55, 250*2*ratio, 20)
+
+
+    love.graphics.setColor(255, 255, 255)
+    local text = the.player.ship.hull .. ' / ' .. the.player.ship.maxHull
+    love.graphics.print(text, love.window.getWidth()/2-love.graphics.getFont():getWidth(text)/2, love.window.getHeight()-60)
 
     if self.selectedObject ~= nil then
         
