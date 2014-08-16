@@ -1,14 +1,8 @@
 game = {}
 
 function game:init()
-<<<<<<< HEAD
-    -- the system will be changed to match whichever system the player is in
-    the.system:load(the.player.location)
-	
 	self.missionController = MissionController:new()
 
-=======
->>>>>>> added ship damage, added weapon spread, changed ship image to a ship sketch, added ship damage notifier, more AI conditions, and other improvements
     self.HUD = HUD:new()
     self.HUD:addWidget(Radar:new())
 
