@@ -12,6 +12,10 @@ function Planet:initialize()
     self.height = self.radius*2
 end
 
+function Planet:load() -- called when system data is loaded
+	self.img = love.graphics.newImage('img/planets/'..self.pointer)
+end
+
 function Planet:canLand(ship)
 	local x, y = ship.body:getPosition()
 	-- Checks if the ship is close enough to the planet to land (in a square bounding box)
@@ -32,5 +36,7 @@ end
 
 function Planet:draw()
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", self.x, self.y, self.radius)
+    --love.graphics.circle("fill", self.x, self.y, self.radius)
+	
+	love.graphics.draw(self.img, self.x-self.width/2, self.y-self.width/2, 0, self.width/self.img:getWidth(), self.height/self.img:getHeight())
 end

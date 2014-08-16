@@ -8,9 +8,11 @@ STAR_SYSTEMS["Sol"] = {
         {
             class = "Planet", 
             data = {
-                name  ="Earth", 
+                name  = "Earth", 
                 x = 0, 
-                y = 0
+                y = 0,
+				
+				pointer = 'Earth.png'
             }
         },
         {
@@ -18,7 +20,9 @@ STAR_SYSTEMS["Sol"] = {
             data = {
                 name  = "Mars", 
                 x = 600, 
-                y = 400
+                y = 400,
+				
+				pointer = 'Mars.png'
             }
         },
     },
@@ -35,6 +39,8 @@ STAR_SYSTEMS["Proxima Centauri"] = {
                 name = "Belinov",
                 x = 0,
                 y = 0,
+				
+				pointer = 'Belinov.png'
             }
         },
     },

@@ -53,7 +53,9 @@ function StarSystem:load(name)
         newObject.name = object.data.name
         newObject.x = object.data.x
         newObject.y = object.data.y
+		newObject.pointer = object.data.pointer
 
+		newObject:load()
         self:addObject(newObject)
     end
 
