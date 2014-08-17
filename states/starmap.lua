@@ -46,6 +46,11 @@ function starmap:update(dt)
 		mouseX, mouseY = centerX, centerY
 	end
 	
+	-- prevents starmap scrolling quickly if mouse is off-screen when the starmap is opened
+	if mouseX <= 0 or mouseX >= love.window.getWidth()-1 or mouseY <= 0 or mouseY >= love.window.getHeight()-1 then
+		mouseX, mouseY = centerX, centerY
+	end
+	
     local dx, dy = centerX - mouseX, centerY - mouseY
     self.translateX = self.translateX + dx
     self.translateY = self.translateY + dy
