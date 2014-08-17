@@ -8,8 +8,8 @@ end
 
 function bbs:enter()
 	local bbsOptions = {}
-	for k, mission in pairs(self.missionData) do
-		if mission.start == the.player.planet.name then
+	for i, mission in ipairs(self.missionData) do
+		if mission.start == the.player.planet.name and not mission.accepted then
 			table.insert(bbsOptions, mission)
 		end
 	end
@@ -18,7 +18,15 @@ function bbs:enter()
 	
 	-- returns mission data when accepted
 	self.bbsList.returnMission = function (mission)
-		game.missionController:newMission(mission)
+		if the.player.ship.maxCargo - the.player.ship:getCargoMass() > 0 then
+			the.player.ship.maxCargo = the.player.ship.maxCargo - 1 -- each package decreses max cargo space
+			mission.accepted = true
+			game.missionController:newMission(mission)
+			return true
+		else
+			fx.text(3, 'Not enough available cargo space. 1 ton required.', 5, 5, {255, 0, 0})
+			return false
+		end
 	end
 end
 

@@ -23,9 +23,11 @@ function BBS:initialize(options)
 	self.acceptButton:centerAround(self.x+self.width-self.acceptButton.width/2-10, self.y+self.height-self.acceptButton.height/2-10)
 	self.acceptButton.active = {74, 232, 80}
 	self.acceptButton.activated = function()
-		self.returnMission(self.options[self.activeItem])
-		table.remove(self.options, self.activeItem)
-		self:setup()
+		delete = self.returnMission(self.options[self.activeItem])
+		if delete then -- only removes the mission from the list if it can be taken
+			table.remove(self.options, self.activeItem)
+			self:setup()
+		end
 	end
 	
 	self.activeItem = 1
