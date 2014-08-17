@@ -40,6 +40,22 @@ function love.update(dt)
     tween.update(dt)
 end
 
+function love.keypressed(key, isrepeat)
+	if not isrepeat then
+		-- takes a screenshot and saves it
+		if key == "f12" then
+			if not love.filesystem.exists("screenshots") then
+				love.filesystem.createDirectory("screenshots")
+			end
+			
+			files = love.filesystem.getDirectoryItems("screenshots")
+			screenshotNum = #files + 1
+			screenshot = love.graphics.newScreenshot()
+			screenshot:encode("screenshots/screenshot"..screenshotNum..".png")
+		end
+	end
+end
+
 function love.draw()
     fx.draw()
 end
