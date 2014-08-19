@@ -189,6 +189,14 @@ function Ship:getCargoMass()
     return sum
 end
 
+function Ship:getCargoValue()
+    local sum = 0
+    for commodity, amount in pairs(self.cargo) do
+        sum = sum + amount*tradecenter.commodityPrices[commodity]
+    end
+    return sum
+end
+
 function Ship:addCargo(commodity, amount)
     self.cargo[commodity] = self.cargo[commodity] + amount
 end

@@ -8,14 +8,14 @@ function sidebarButton:initialize(text, x, y, w, h, fontSize, activated)
     self.width = w or self.font:getWidth(text)
     self.height = h or self.font:getHeight(text)
 
-    self.active = {127, 127, 127}
-	self.activebg = {74, 232, 80}
-    self.bg = {255, 255, 255, 0}
+    self.active = {255, 255, 255}
+	self.activebg = {66, 66, 66}
+    self.bg = {0, 0, 0, 0}
     self.fg = {255, 255, 255, 255}
 	
 	self.outline = true
-	self.outlineColor = {236, 236, 236}
-	self.outlineWidth = 6
+	self.outlineColor = {255, 255, 255}
+	self.outlineWidth = 2
 
     self.translateX = 0
 	
@@ -35,8 +35,8 @@ function sidebarButton:update()
 end
 
 -- Not used currently. Could be used to 'lock' a mission in the sidebar
-function sidebarButton:mousepressed(x, y, Button)
-    if self:hover() and msButton == "l" then
+function sidebarButton:mousepressed(x, y, mbutton)
+    if self:hover() and mbutton == "l" then
         self.activated()
     end
 end

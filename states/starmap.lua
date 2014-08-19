@@ -61,7 +61,7 @@ end
 
 function starmap:keypressed(key, isrepeat)
     if key == "m" then
-        state.switch(game)
+        state.pop()
     end
 end
 

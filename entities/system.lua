@@ -71,7 +71,7 @@ function StarSystem:entered()
     end
 
     local ship = the.system:addEntity(Ship:new())
-    ship.body:setPosition(math.random(-500, 500), math.random(-500, 500))
+    ship.body:setPosition(math.random(-1000, 1000)-200, math.random(-1000, 1000)+200)
 end
 
 -- finds closest object to x, y within radius

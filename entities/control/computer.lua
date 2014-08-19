@@ -190,11 +190,9 @@ function ComputerControl:update(dt)
 end
 
 function ComputerControl:keypressed(key, isrepeat)
-    if key == "b" then
-        if self.behavior == self.stayCloseAndFollow then
-            self.behavior = self.seekAndDestroy
-        else
-            self.behavior = self.stayCloseAndFollow
-        end
+    if the.player.ship:getCargoValue() > 6000 then
+        self.behavior = self.seekAndDestroy
+    else
+        self.behavior = self.stayCloseAndFollow
     end
 end

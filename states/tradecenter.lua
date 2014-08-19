@@ -3,22 +3,22 @@ tradecenter = {}
 tradecenter.buttons = {}
 tradecenter.commButtons = {}
 
+tradecenter.commodityPrices = {
+    ["Equipment"] = 200,
+    ["Medical Supplies"] = 350,
+    ["Ore"] = 125,
+    ["Metal"] = 160,
+}
+
+tradecenter.commodities = {
+    "Equipment",
+    "Medical Supplies",
+    "Ore",
+    "Metal",
+}
+
 function tradecenter:init()
     self.selectedCommodity = nil
-
-    self.commodities = {
-        "Equipment",
-        "Medical Supplies",
-        "Ore",
-        "Metal",
-    }
-
-    self.commodityPrices = {
-        ["Equipment"] = 200,
-        ["Medical Supplies"] = 350,
-        ["Ore"] = 125,
-        ["Metal"] = 160,
-    }
 
     for i, comm in pairs(self.commodities) do
         table.insert(self.commButtons, Button:new(comm, 25, 50*(i-1)+100, nil, nil, font[32], function()

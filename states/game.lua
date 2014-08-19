@@ -78,7 +78,7 @@ function game:keypressed(key, isrepeat)
     love.keyboard.setKeyRepeat(false)
 
     if key == "m" then
-        state.switch(starmap)
+        state.push(starmap)
     end
 
     if key == "j" then
@@ -170,37 +170,37 @@ function game:draw()
     local text = the.player.ship.hull .. ' / ' .. the.player.ship.maxHull
     love.graphics.print(text, love.window.getWidth()/2-love.graphics.getFont():getWidth(text)/2, love.window.getHeight()-60)
 
-    if self.selectedObject ~= nil then
-        
-        
+    love.graphics.setLineWidth(1)
 
+    if self.selectedObject ~= nil then
+    
         local text = 'STELLAR DESTINATION: '..string.upper(self.selectedObject.name)
-        love.graphics.setFont(fontBold[28])
+        love.graphics.setFont(font[28])
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
         love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
 
         local text = 'PRESS (L) TO LAND'
-        love.graphics.setFont(font[24])
+        love.graphics.setFont(fontLight[24])
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
 
     elseif starmap.selectedSystem ~= nil then
         local text = 'HYPERJUMP DESTINATION: '..string.upper(starmap.selectedSystem)
-        love.graphics.setFont(fontBold[28])
+        love.graphics.setFont(font[28])
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
         love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
 
         local text = 'PRESS (J) TO JUMP'
-        love.graphics.setFont(font[24])
+        love.graphics.setFont(fontLight[24])
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
     else
         local text = 'LOCATION: '..string.upper(the.system.name)
-        love.graphics.setFont(fontBold[28])
+        love.graphics.setFont(font[28])
         love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
         love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
     end
 	
     love.graphics.setFont(font[18])
 	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(love.timer.getFPS(), 5, 5)
-    love.graphics.print(the.system.world:getBodyCount(), 5, 40)
+	love.graphics.print(love.timer.getFPS(), 0, 0)
+    love.graphics.print(the.player.ship:getCargoValue(), 0, 40)
 end
