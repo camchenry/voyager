@@ -19,8 +19,6 @@ function starmap:enter()
     self.mouseX = 0
     self.mouseY = 0
 
-    self.selectedSystem = nil
-
     love.mouse.setVisible(false)
 	
 	self.first = true
@@ -55,6 +53,11 @@ function starmap:update(dt)
     self.translateX = self.translateX + dx
     self.translateY = self.translateY + dy
 
+    if self.selectedSystem ~= nil then
+        self.translateX = -self.rawSystemData[self.selectedSystem].x + self.centerX
+        self.translateY = -self.rawSystemData[self.selectedSystem].y + self.centerY
+    end
+
     self.mouseX = self.translateX - centerX
     self.mouseY = self.translateY - centerY
 end
@@ -69,6 +72,8 @@ function starmap:mousepressed(x, y, button)
     if button == "l" then
         local mouseX, mouseY = self.centerX, self.centerY
 
+        if self.selectedSystem ~= nil then self.selectedSystem = nil return end
+
         for systemName, system in pairs(self.rawSystemData) do
             local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
 
@@ -79,6 +84,8 @@ function starmap:mousepressed(x, y, button)
                 self.selectedSystem = nil
             end
         end
+    elseif button == "r" then
+        self.selectedSystem = nil
     end
 end
 
@@ -86,40 +93,74 @@ function starmap:draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setFont(font[16])
 
+    -- additional center indicators
+    love.graphics.setColor(33, 33, 33)
+    love.graphics.line(love.window.getWidth()/2, 0, love.window.getWidth()/2, love.window.getHeight())
+    love.graphics.line(0, love.window.getHeight()/2, love.window.getWidth(), love.window.getHeight()/2)
+
+    -- selector circle thing
+    if self.selectedSystem ~= nil then
+        love.graphics.setColor(0, 255, 0)
+        love.graphics.circle("fill", self.centerX, self.centerY, 8)
+
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.setFont(fontLight[16])
+        love.graphics.print("SELECTED FOR JUMP", self.centerX + 17, self.centerY - 15)
+
+        local objects = self.rawSystemData[self.selectedSystem].objects
+
+        if #objects > 0 then
+            love.graphics.print("PLANETS", self.centerX + 17, self.centerY+10)
+            love.graphics.line(self.centerX+17, self.centerY+33, self.centerX+100, self.centerY+33)
+            for k, planet in pairs(self.rawSystemData[self.selectedSystem].objects) do
+                love.graphics.print("- "..planet.data.name, self.centerX+25, self.centerY + 13 + (k*15))
+            end
+        else
+            love.graphics.print("NO OBJECTS", self.centerX + 17, self.centerY+10)
+        end
+    end
+
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.setLineWidth(1)
+
     -- draw systems
     love.graphics.push()
     love.graphics.translate(self.translateX, self.translateY)
 
     for systemName, system in pairs(self.rawSystemData) do
+        love.graphics.setColor(255, 255, 255)
+
         love.graphics.circle("line", system.x, system.y, 10)
-        love.graphics.print(systemName, system.x+12, system.y-25)
+        if systemName == self.selectedSystem then
+            love.graphics.setFont(font[16])
+        else
+            love.graphics.setFont(fontLight[16])
+        end
+
+        love.graphics.print(systemName, system.x+20, system.y-35)
 
         -- current location indicator
         if systemName == the.system.name then
             love.graphics.setColor(0, 255, 255)
             love.graphics.circle("fill", system.x, system.y, 5)
-            love.graphics.setColor(255, 255, 255)
         -- selected system jump line
         elseif systemName == self.selectedSystem then
             love.graphics.setColor(255, 255, 255, 33)
             love.graphics.line(system.x, system.y, the.system.x, the.system.y)
-            love.graphics.setColor(255, 255, 255, 255)
         end
+
+        -- line for text to sit on
+        love.graphics.setColor(200, 200, 200)
+        love.graphics.line(system.x+7, system.y-7, system.x+15, system.y-12, system.x+love.graphics.getFont():getWidth(systemName)+25, system.y-12)
     end
 
     love.graphics.pop()
 
-    -- middle indicator
+    -- center indicator
     local centerX, centerY = self.centerX, self.centerY
-    love.graphics.circle("fill", centerX, centerY, 3)
+    love.graphics.circle("line", centerX, centerY, 2)
 
     -- x and y text
     love.graphics.setFont(font[24])
     love.graphics.print(self.translateX-centerX..', '..self.translateY-centerY)
-
-    -- selected system
-    if self.selectedSystem ~= nil then
-        love.graphics.setFont(font[36])
-        love.graphics.print(self.selectedSystem, 0, 75)
-    end
 end
