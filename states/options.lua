@@ -20,7 +20,7 @@ function options:enter()
 	local resTable = love.window.getFullscreenModes(1)
 	local resolutions = {}
 	for k, res in pairs(resTable) do
-		if res.width >= 800 then -- cuts off any resolutions with a with under 800
+		if res.width > 800 then -- cuts off any resolutions with a with under 800
 			table.insert(resolutions, {res.width, res.height})
 		end
 	end
