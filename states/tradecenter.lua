@@ -10,7 +10,7 @@ function tradecenter:init()
     self.bottomMargin = 100
     self.topMargin = 120
 
-    self.sidebarWidth = 250
+    self.sidebarWidth = math.max(250, math.floor(love.window.getWidth()/4))
 
     self.width = love.window.getWidth() - self.sideMargin*2 - self.sidebarWidth
     self.height = love.window.getHeight() - (self.bottomMargin+self.topMargin)

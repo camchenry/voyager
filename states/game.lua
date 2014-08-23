@@ -4,7 +4,10 @@ function game:init()
 	self.missionController = MissionController:new()
 
     self.HUD = HUD:new()
-    self.HUD:addWidget(Radar:new())
+    self.radar = Radar:new()
+    self.HUD:addWidget(self.radar)
+    self.navigation = Navigation:new()
+    self.HUD:addWidget(self.navigation)
 
     for i=1, 10 do
         the.economy:update()
@@ -12,7 +15,7 @@ function game:init()
 
     the.system.world:setCallbacks(collision.beginContact, collision.endContact, collision.preSolve, collision.postSolve)
 	
-	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 256, 256)
+	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
 	self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
 	self.starImages = {}
 	for i = 1, 2 do
@@ -67,6 +70,15 @@ function game:update(dt)
         the.player.ship:update(dt)
     else
         wait(2, state.switch, menu)
+    end
+
+    if self.selectedObject ~= nil then
+        self.navigation:setText('STELLAR DESTINATION: '..string.upper(self.selectedObject.name), 'PRESS (L) TO LAND')
+
+    elseif starmap.selectedSystem ~= nil then
+        self.navigation:setText('HYPERJUMP DESTINATION: '..string.upper(starmap.selectedSystem), 'PRESS (J) TO JUMP')
+    else
+        self.navigation:setText('LOCATION: '..string.upper(the.system.name))
     end
 
     self.HUD:update(dt)
@@ -176,32 +188,7 @@ function game:draw()
 
     love.graphics.setLineWidth(1)
 
-    if self.selectedObject ~= nil then
     
-        local text = 'STELLAR DESTINATION: '..string.upper(self.selectedObject.name)
-        love.graphics.setFont(font[28])
-        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
-        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
-
-        local text = 'PRESS (L) TO LAND'
-        love.graphics.setFont(fontLight[24])
-        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
-
-    elseif starmap.selectedSystem ~= nil then
-        local text = 'HYPERJUMP DESTINATION: '..string.upper(starmap.selectedSystem)
-        love.graphics.setFont(font[28])
-        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
-        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
-
-        local text = 'PRESS (J) TO JUMP'
-        love.graphics.setFont(fontLight[24])
-        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 100)
-    else
-        local text = 'LOCATION: '..string.upper(the.system.name)
-        love.graphics.setFont(font[28])
-        love.graphics.print(text, love.window.getWidth()/2 - love.graphics.getFont():getWidth(text)/2, 50)
-        love.graphics.line(100, 150, 150, 100, love.window.getWidth()-150, 100, love.window.getWidth()-100, 150)
-    end
 	
     love.graphics.setFont(font[18])
 	love.graphics.setColor(255, 255, 255)

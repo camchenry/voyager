@@ -4,7 +4,11 @@ function Radar:initialize()
     self.x = 90
     self.y = love.window.getHeight() - 90
 	
-	self.radius = 80 -- Size of the radar on-screen
+    -- Size of the radar on-screen
+	self.radius = 80
+    if love.window.getWidth() >= 1920 then
+        self.radius = 160
+    end
 	self.range = 2500 -- How far the radar can accurately scan before a point is put on the edge
 end
 
@@ -34,6 +38,12 @@ function Radar:findLocal(x1, y1, x2, y2, iconRadius)
 end
 
 function Radar:draw()
+    love.graphics.push()
+
+    if love.window.getWidth() >= 1920 then
+        love.graphics.translate(80, -80)
+    end
+
     -- Radar circle
     love.graphics.setLineWidth(6)
     love.graphics.setColor(44, 44, 44, 255)
@@ -78,4 +88,6 @@ function Radar:draw()
 	--love.graphics.setColor(82, 217, 235)
     love.graphics.setColor(255, 255, 255)
     love.graphics.circle("fill", self.x, self.y, 1)
+
+    love.graphics.pop()
 end
