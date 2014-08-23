@@ -30,6 +30,7 @@ function Button:draw()
     local r, g, b, a = love.graphics.getColor()
     local oldColor = {r, g, b, a}
 
+
     love.graphics.setColor(self.bg)
     love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 

@@ -6,6 +6,10 @@ function game:init()
     self.HUD = HUD:new()
     self.HUD:addWidget(Radar:new())
 
+    for i=1, 10 do
+        the.economy:update()
+    end
+
     the.system.world:setCallbacks(collision.beginContact, collision.endContact, collision.preSolve, collision.postSolve)
 	
 	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 256, 256)

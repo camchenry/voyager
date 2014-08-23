@@ -66,6 +66,7 @@ function start:continueToGame()
 	local success, errorMessage = self:validateForm()
     if success then
         self:initializePlayer()
+        the.economy = Economy:new()
         fx.reset()
         state.switch(game)
     else

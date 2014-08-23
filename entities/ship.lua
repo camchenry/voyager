@@ -36,12 +36,11 @@ function Ship:initialize(world, controlScheme)
 
     -- ship properties
     self.maxCargo = 20
-    self.cargo = {
-        ["Equipment"] = 5,
-        ["Medical Supplies"] = 10,
-        ["Ore"] = 2,
-        ["Metal"] = 0,
-    }
+    self.cargo = {}
+
+    for i, commodity in pairs(the.economy.commodities) do
+        self.cargo[commodity] = 0
+    end
 
     -- ship combat properties
     self.hull = 1000
@@ -192,7 +191,7 @@ end
 function Ship:getCargoValue()
     local sum = 0
     for commodity, amount in pairs(self.cargo) do
-        sum = sum + amount*tradecenter.commodityPrices[commodity]
+        sum = sum + amount*the.economy.prices[commodity]
     end
     return sum
 end

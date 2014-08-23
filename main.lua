@@ -31,6 +31,7 @@ function love.load()
     the = {}
     the.player = nil
     the.system = nil
+    the.economy = Economy:new()
 
     state.registerEvents()
     state.switch(menu)

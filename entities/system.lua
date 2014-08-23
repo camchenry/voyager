@@ -64,11 +64,7 @@ function StarSystem:load(name)
 end
 
 function StarSystem:entered()
-    if tradecenter.commodityPrices ~= nil then
-        for comm, price in pairs(tradecenter.commodityPrices) do
-            tradecenter.commodityPrices[comm] = tradecenter.commodityPrices[comm] + math.random(-50, 50)
-        end
-    end
+    the.economy:update()
 
     local ship = the.system:addEntity(Ship:new())
     ship.body:setPosition(math.random(-1000, 1000)-200, math.random(-1000, 1000)+200)
