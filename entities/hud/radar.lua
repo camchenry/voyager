@@ -38,8 +38,6 @@ function Radar:findLocal(x1, y1, x2, y2, iconRadius)
 end
 
 function Radar:draw()
-    love.graphics.push()
-
     if love.window.getWidth() >= 1920 then
         love.graphics.translate(80, -80)
     end
@@ -89,5 +87,5 @@ function Radar:draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.circle("fill", self.x, self.y, 1)
 
-    love.graphics.pop()
+    love.graphics.origin()
 end

@@ -4,16 +4,14 @@ function game:init()
 	self.missionController = MissionController:new()
 
     self.HUD = HUD:new()
-    self.radar = Radar:new()
-    self.HUD:addWidget(self.radar)
     self.navigation = Navigation:new()
     self.HUD:addWidget(self.navigation)
+    self.radar = Radar:new()
+    self.HUD:addWidget(self.radar)
 
-    for i=1, 10 do
-        the.economy:update()
-    end
-
-    the.system.world:setCallbacks(collision.beginContact, collision.endContact, collision.preSolve, collision.postSolve)
+    -- by setting the game up with a reset, it ensures that resetting will 
+    -- take the game back to the original state
+    self:reset()
 	
 	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
 	self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
@@ -24,10 +22,24 @@ function game:init()
 	end
 end
 
+function game:reset()
+    self.collision = Collision:new()
+    assert(self.collision ~= nil)
+    assert(Collision ~= nil)
+    assert(self.collision.beginContact ~= nil)
+
+    the.economy = Economy:new()
+    for i=1, 10 do
+        the.economy:update()
+    end
+end
+
 function game:enter()
     -- the system will be changed to match whichever system the player is in
     the.system:load(the.player.location)
     the.system:entered()
+
+    the.system.world:setCallbacks(self.collision.beginContact, self.collision.endContact, self.collision.preSolve, self.collision.postSolve)
 
     self.selectedObject = nil
 
@@ -60,17 +72,19 @@ function game:load(file, ignoreError)
 end
 
 function game:update(dt)
-    if not the.player.ship.destroyed then
-        self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
-        self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
-    end
-
     the.system:update(dt)
     if not the.player.ship.destroyed then
         the.player.ship:update(dt)
     else
         wait(2, state.switch, menu)
+        self:reset()
     end
+
+    if not the.player.ship.destroyed then
+        self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
+        self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
+    end
+
 
     if self.selectedObject ~= nil then
         self.navigation:setText('STELLAR DESTINATION: '..string.upper(self.selectedObject.name), 'PRESS (L) TO LAND')
@@ -186,9 +200,6 @@ function game:draw()
     local text = the.player.ship.hull .. ' / ' .. the.player.ship.maxHull
     love.graphics.print(text, love.window.getWidth()/2-love.graphics.getFont():getWidth(text)/2, love.window.getHeight()-60)
 
-    love.graphics.setLineWidth(1)
-
-    
 	
     love.graphics.setFont(font[18])
 	love.graphics.setColor(255, 255, 255)

@@ -30,4 +30,5 @@ function HUD:draw()
     end
 
     love.graphics.setColor(255, 255, 255)
+    love.graphics.origin()
 end

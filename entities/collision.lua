@@ -1,6 +1,10 @@
-collision = {}
+Collision = class("Collision")
 
-function collision.findShip(fixture)
+function Collision:initialize()
+
+end
+
+function Collision.static.findShip(fixture)
     local attachedBody = fixture:getBody()
 
     -- player shortcut
@@ -15,7 +19,7 @@ function collision.findShip(fixture)
     end
 end
 
-function collision.findProjectile(fixture)
+function Collision.static.findProjectile(fixture)
     local attachedBody = fixture:getBody()
 
     for i, projectile in pairs(the.system.projectiles) do
@@ -25,13 +29,13 @@ function collision.findProjectile(fixture)
     end
 end
 
-function collision.beginContact(objA, objB, contact)
+function Collision.beginContact(objA, objB, contact)
     if objA:getUserData() == "projectile" and objB:getUserData() == "ship" then
-        local ship = collision.findShip(objB)
-        ship:takeDamage(collision.findProjectile(objA))
+        local ship = Collision.findShip(objB)
+        ship:takeDamage(Collision.findProjectile(objA))
     elseif objA:getUserData() == "ship" and objB:getUserData() == "projectile" then
-        local ship = collision.findShip(objA)
-        ship:takeDamage(collision.findProjectile(objB))
+        local ship = Collision.findShip(objA)
+        ship:takeDamage(Collision.findProjectile(objB))
     end
 
     if objA:getUserData() == "projectile" then
@@ -45,14 +49,14 @@ function collision.beginContact(objA, objB, contact)
     end
 end
 
-function collision.endContact(this, that, contact)
+function Collision.endContact(this, that, contact)
 
 end
 
-function collision.preSolve(this, that, contact)
+function Collision.preSolve(this, that, contact)
 
 end
 
-function collision.postSolve(this, that, contact)
+function Collision.postSolve(this, that, contact)
 
 end

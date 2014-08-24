@@ -193,6 +193,6 @@ function ComputerControl:keypressed(key, isrepeat)
     if the.player.ship:getCargoValue() > 6000 then
         self.behavior = self.seekAndDestroy
     else
-        self.behavior = self.stayCloseAndFollow
+        self.behavior = self.seekAndDestroy
     end
 end
