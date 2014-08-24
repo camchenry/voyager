@@ -8,6 +8,8 @@ function starmap:init()
 
     self.mouseX = 0
     self.mouseY = 0
+	
+	self.maxDist = 600
 end
 
 function starmap:enter()
@@ -49,9 +51,23 @@ function starmap:update(dt)
 		mouseX, mouseY = centerX, centerY
 	end
 	
+	
     local dx, dy = centerX - mouseX, centerY - mouseY
-    self.translateX = self.translateX + dx
-    self.translateY = self.translateY + dy
+	local newX = self.translateX + dx
+	local newY = self.translateY + dy
+	
+	-- checks if distance is greater than max, sets it to max
+	local dist = math.dist(centerX, centerY, newX, newY)
+	if dist > self.maxDist then
+		local angle = math.angle(centerX, centerY, newX, newY)
+		
+		newX = centerX + math.cos(angle) * (self.maxDist)
+		newY = centerY +  math.sin(angle) * (self.maxDist)
+	end
+	
+    self.translateX = newX
+    self.translateY = newY
+	
 
     if self.selectedSystem ~= nil then
         self.translateX = -self.rawSystemData[self.selectedSystem].x + self.centerX
