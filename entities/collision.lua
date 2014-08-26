@@ -36,6 +36,8 @@ function Collision.beginContact(objA, objB, contact)
     elseif objA:getUserData() == "ship" and objB:getUserData() == "projectile" then
         local ship = Collision.findShip(objA)
         ship:takeDamage(Collision.findProjectile(objB))
+    elseif objA:getUserData() == "ship" and objB:getUserData() == "ship" then
+        contact:setEnabled(false)
     end
 
     if objA:getUserData() == "projectile" then

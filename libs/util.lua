@@ -126,3 +126,7 @@ function love.graphics.ellipse(mode, x, y, a, b, phi, points)
 
   love.graphics.polygon(mode, coords)
 end
+
+function round(what, precision)
+   return math.floor(what*math.pow(10,precision)+0.5) / math.pow(10,precision)
+end

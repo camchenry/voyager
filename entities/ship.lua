@@ -19,7 +19,7 @@ function Ship:initialize(world, controlScheme)
     self.shape = love.physics.newRectangleShape(self.width, self.height)
     self.fixture = love.physics.newFixture(self.body, self.shape, 1)
     self.fixture:setMask(2) -- assume don't collide with non-player bullets (aka bullets made by this ship)
-    self.fixture:setCategory(3)
+    self.fixture:setCategory(2)
     self.fixture:setUserData("ship")
 
     -- control scheme (assume ComputerControl as default)
@@ -32,7 +32,7 @@ function Ship:initialize(world, controlScheme)
     self.angularDamping = 15
     self.inertia = 13 -- more inertia = more resistance to force
     self.speed = 500
-    self.maxSpeed = 225
+    self.maxSpeed = 250
 
     -- ship properties
     self.maxCargo = 20
@@ -41,6 +41,10 @@ function Ship:initialize(world, controlScheme)
     for i, commodity in pairs(the.economy.commodities) do
         self.cargo[commodity] = 0
     end
+
+    self.jumpTime = 2.5
+    self.jumpCountdown = 0
+    self.engagingJump = false
 
     -- ship combat properties
     self.hull = 1000
@@ -59,16 +63,23 @@ end
 function Ship:update(dt)
     if self.destroyed then self:destroy() return end
 
-    self.controlScheme:update(dt)
     self.weapon:update(dt)
 
-    if not self.jumping then
+    if not self.jumping then 
+        self.controlScheme:update(dt)
         self:limitSpeed()
+    elseif self.jumping and self.engagingJump then
+        self:turnToward(starmap:angleTo(starmap.selectedSystem))
+    elseif self.jumping and not self.engagingJump then
+        self.body:setInertia(1)
+        self.body:setMass(0.005)
+
+        self:thrustPrograde()
     end
 end
 
 function Ship:keypressed(key, isrepeat)
-    if self.controlScheme.keypressed ~= nil then
+    if self.controlScheme.keypressed ~= nil and not self.jumping then
         self.controlScheme:keypressed(key, isrepeat)
     end
 end

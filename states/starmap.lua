@@ -34,6 +34,12 @@ function starmap:focus(f)
 	if f then self.first = true end
 end
 
+function starmap:angleTo(system)
+    local x1, y1 = self.rawSystemData[the.player.location].x, self.rawSystemData[the.player.location].y
+    local x2, y2 = self.rawSystemData[system].x, self.rawSystemData[system].y
+    return math.atan2(y2 - y1, x2 - x1)
+end
+
 function starmap:update(dt)
     local centerX, centerY = self.centerX, self.centerY
     if love.window.hasMouseFocus() then -- Prevents the mouse being grabbed by the game while alt-tabbing

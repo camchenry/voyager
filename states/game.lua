@@ -85,8 +85,13 @@ function game:update(dt)
         self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
     end
 
-
-    if self.selectedObject ~= nil then
+    if the.player.ship.jumping then
+        if the.player.ship.engagingJump then
+            self.navigation:setText("ENGAGING HYPERJUMP DRIVE", "T-"..round(the.player.ship.jumpCountdown, 2))
+        else
+            self.navigation:setText("EXECUTING HYPERJUMP")
+        end
+    elseif self.selectedObject ~= nil then
         self.navigation:setText('STELLAR DESTINATION: '..string.upper(self.selectedObject.name), 'PRESS (L) TO LAND')
 
     elseif starmap.selectedSystem ~= nil then
@@ -107,25 +112,27 @@ function game:keypressed(key, isrepeat)
     end
     love.keyboard.setKeyRepeat(false)
 
-    if key == "m" then
-        state.push(starmap)
-    end
+    if not the.player.ship.jumping then
+        if key == "m" then
+            state.push(starmap)
+        end
 
-    if key == "j" then
-        the.player:jump()
-        self.selectedObject = nil
-    end
+        if key == "j" then
+            the.player:jump()
+            self.selectedObject = nil
+        end
 
-    if key == "l" then
-        if self.selectedObject ~= nil then
-			if self.selectedObject:canLand(the.player.ship) then
-				the.player.planet = self.selectedObject
-				the.player.ship:stop()
-				self.selectedObject = nil
-				state.switch(landed)
-			end
-        else
-            self.selectedObject = the.system:closestObject(the.player.ship.body:getX()-self.translateX, the.player.ship.body:getY()-self.translateY)
+        if key == "l" then
+            if self.selectedObject ~= nil then
+    			if self.selectedObject:canLand(the.player.ship) then
+    				the.player.planet = self.selectedObject
+    				the.player.ship:stop()
+    				self.selectedObject = nil
+    				state.switch(landed)
+    			end
+            else
+                self.selectedObject = the.system:closestObject(the.player.ship.body:getX()-self.translateX, the.player.ship.body:getY()-self.translateY)
+            end
         end
     end
 
@@ -186,7 +193,12 @@ function game:draw()
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
 
+    fx.draw()
+
     self.HUD:draw()
+
+    love.graphics.setLineWidth(1)
+    love.graphics.setFont(font[18])
 
     local ratio = the.player.ship.hull / the.player.ship.maxHull
 
