@@ -137,14 +137,40 @@ function ComputerControl:createAI()
         self.ship:turnToward(the.player.ship)
         return self.ship:facing(the.player.ship)
     end)
+    local doFacePredictedPosition = Action(function()
+        -- Instead of shooting where the ship is now, it needs to fire where the
+        -- ship will be in the future, with some degree of accuracy.
+
+        local selfVelocity = vector(self.ship.body:getLinearVelocity())
+        local selfPosition = vector(self.ship.body:getPosition())
+
+        local otherVelocity = vector(the.player.ship.body:getLinearVelocity())
+        local otherPosition = vector(the.player.ship.body:getPosition())
+
+        -- T = how far ahead to predict (in frames)
+        -- If T is a constant, it will have problems when a target is very close,
+        -- because it's continuing to predict the target's position.
+
+        -- This can be solved by having a dynamic value for T based on distance to target
+        local distanceToTarget = (otherPosition - selfPosition):len()
+        local T = (distanceToTarget / 750)
+        fx.text(love.timer.getDelta(), tostring(T), 0, 250)
+        self.predictionVector = otherPosition + (otherVelocity)*T
+
+        local point = {
+            x = self.predictionVector.x,
+            y = self.predictionVector.y,
+        }
+
+        self.ship:turnToward(point)
+        return self.ship:facing(point, math.rad(5))
+    end)
     local doFireWeapon = Action(function()
         self.ship.weapon:fire(self.ship)
         return true
     end)
     local doMoveTowardPlayer = Action(function()
-        self.ship:thrustPrograde()
-        self.ship:thrustPrograde()
-        self.ship:thrustPrograde()
+        --self.ship:thrustPrograde()
         return true
     end)
     local doEvade = Action(function()
@@ -155,15 +181,13 @@ function ComputerControl:createAI()
     end)
 
     self.seekAndDestroy = Selector{
+        --Sequence{
+        --    isPlayerAttacking,
+        --    isNearPlayer,
+        --    doEvade
+        --},
         Sequence{
-            isPlayerAttacking,
-            isNearPlayer,
-            doEvade
-        },
-        Sequence{
-            doFaceThePlayer,
-            doMoveTowardPlayer,
-            isShipFacingPlayer,
+            doFacePredictedPosition,
             doFireWeapon
         }
     }
@@ -178,7 +202,7 @@ function ComputerControl:createAI()
 
     self.none = Selector{}
 
-    self.behavior = self.stayCloseAndFollow
+    self.behavior = self.seekAndDestroy
 end
 
 function ComputerControl:update(dt)
@@ -190,9 +214,9 @@ function ComputerControl:update(dt)
 end
 
 function ComputerControl:keypressed(key, isrepeat)
-    if the.player.ship:getCargoValue() > 6000 then
+    --[[if the.player.ship:getCargoValue() > 6000 then
         self.behavior = self.seekAndDestroy
     else
         self.behavior = self.seekAndDestroy
-    end
+    end]]
 end

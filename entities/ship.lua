@@ -28,7 +28,7 @@ function Ship:initialize(world, controlScheme)
 
     -- physics properties
     self.mass = 3.25
-    self.torque = 450
+    self.torque = 1000
     self.angularDamping = 15
     self.inertia = 13 -- more inertia = more resistance to force
     self.speed = 500
@@ -47,8 +47,8 @@ function Ship:initialize(world, controlScheme)
     self.engagingJump = false
 
     -- ship combat properties
-    self.hull = 1000
-    self.maxHull = 1000
+    self.maxHull = 1000000
+    self.hull = self.maxHull
 
     self.jumping = false
     self.destroyed = false
@@ -99,7 +99,9 @@ function Ship:turnToward(target)
             y = math.sin(target)
         }
     elseif not vector.isvector(target) then
-        target = vector(target.body:getX() - self.body:getX(), target.body:getY() - self.body:getY())
+        local targX = target.x or target.body:getX()
+        local targY = target.y or target.body:getY()
+        target = vector(targX - self.body:getX(), targY - self.body:getY())
     end
 
     if self:facing(target) then
@@ -245,4 +247,8 @@ function Ship:draw()
     love.graphics.setColor(255, 255, 255)
 
     love.graphics.draw(self.testShipImage, self.body:getX() , self.body:getY(), self.body:getAngle()+math.pi/2, self.scaleX, self.scaleY, self.testShipImage:getWidth()/2, self.testShipImage:getHeight()/2)
+
+    if self.controlScheme.predictionVector ~= nil then
+        love.graphics.circle("line", self.controlScheme.predictionVector.x, self.controlScheme.predictionVector.y, 8)
+    end
 end
