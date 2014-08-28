@@ -212,7 +212,7 @@ function game:draw()
     local text = the.player.ship.hull .. ' / ' .. the.player.ship.maxHull
     love.graphics.print(text, love.window.getWidth()/2-love.graphics.getFont():getWidth(text)/2, love.window.getHeight()-60)
 
-    love.graphics.print(the.player.ship.body:getLinearVelocity(), 0, 200)
+    love.graphics.print(vector(the.player.ship.body:getLinearVelocity()):len(), 0, 200)
 
 	
     love.graphics.setFont(font[18])
