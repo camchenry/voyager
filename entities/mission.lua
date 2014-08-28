@@ -48,7 +48,7 @@ function MissionController:getMissions(currentPlanet)
 		for j, planet in pairs(system.objects) do
 			if planet.data.name ~= currentPlanet then
 				if #missions < missionNum then
-					if not MissionController:find('Delivery', currentPlanet, planet.data.name) then
+					if not self:find('Delivery', currentPlanet, planet.data.name) then
 						table.insert(missions, {name = 'Delivery', pay = math.random(20000), desc = 'Take a package to '..planet.data.name..'.', start = currentPlanet, destination = planet.data.name})
 					end
 				end
