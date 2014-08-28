@@ -1,27 +1,28 @@
 bbs = {}
 
 function bbs:init()
-	self.missionData = require 'data.missions'
+	--self.missionData = require 'data.missions'
+	--self.missions = {}
+	--local starSystems = require 'data.systems'
+	
 	
 	self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
 end
 
 function bbs:enter()
-	local bbsOptions = {}
-	for i, mission in ipairs(self.missionData) do
+	local bbsOptions = game.missionController:getMissions(the.player.planet.name)
+	--[[for i, mission in ipairs(self.missionData) do
 		if mission.start == the.player.planet.name and not mission.accepted then
 			table.insert(bbsOptions, mission)
 		end
-	end
+	end]]
+	
 	
 	self.bbsList = BBS:new(bbsOptions)
 	
 	-- returns mission data when accepted
 	self.bbsList.returnMission = function (mission)
-		if the.player.ship.maxCargo - the.player.ship:getCargoMass() > 0 then
-			the.player.ship.maxCargo = the.player.ship.maxCargo - 1 -- each package decreses max cargo space
-			mission.accepted = true
-			game.missionController:newMission(mission)
+		if game.missionController:newMission(mission) then
 			return true
 		else
 			fx.text(3, 'Not enough available cargo space. 1 ton required.', 5, 5, {255, 0, 0})
