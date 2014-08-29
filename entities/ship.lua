@@ -26,13 +26,21 @@ function Ship:initialize(world, controlScheme)
     self.controlScheme = controlScheme or ComputerControl
     self.controlScheme = self.controlScheme:new(self, the.system.world)
 
+    -- cheating factor, for AI difficulty
+    local m = 1
+
+    if controlScheme == ComputerControl then
+        m = 0.25
+    end
+
     -- physics properties
-    self.mass = 3.25
-    self.torque = 450
+    self.mass = 3
+    self.torque = 550*m
     self.angularDamping = 15
-    self.inertia = 13 -- more inertia = more resistance to force
-    self.speed = 500
+    self.inertia = 11 -- more inertia = more resistance to force
+    self.speed = 350*m
     self.maxSpeed = 250
+    self.maxForce = 350*m
 
     -- ship properties
     self.maxCargo = 20
@@ -47,8 +55,8 @@ function Ship:initialize(world, controlScheme)
     self.engagingJump = false
 
     -- ship combat properties
-    self.hull = 1000
-    self.maxHull = 1000
+    self.maxHull = 1000000
+    self.hull = self.maxHull
 
     self.jumping = false
     self.destroyed = false
@@ -58,6 +66,7 @@ function Ship:initialize(world, controlScheme)
     self.body:setMass(self.mass)
     self.body:setAngularDamping(self.angularDamping)
     self.body:setInertia(self.inertia)
+    self.body:setFixedRotation(false)
 end
 
 function Ship:update(dt)
@@ -99,11 +108,9 @@ function Ship:turnToward(target)
             y = math.sin(target)
         }
     elseif not vector.isvector(target) then
-        target = vector(target.body:getX() - self.body:getX(), target.body:getY() - self.body:getY())
-    end
-
-    if self:facing(target) then
-        return
+        local targX = target.x or target.body:getX()
+        local targY = target.y or target.body:getY()
+        target = vector(targX - self.body:getX(), targY - self.body:getY())
     end
 
     local rotX = math.cos(self.body:getAngle())
@@ -151,28 +158,20 @@ function Ship:facing(target, tolerance)
 end
 
 function Ship:limitSpeed()
-    local x, y = self.body:getLinearVelocity()
+    local velocity  = vector(self.body:getLinearVelocity())
 
-    if x > self.maxSpeed then
-        x = self.maxSpeed
-    elseif x < -self.maxSpeed then
-        x = -self.maxSpeed
-    end
+    velocity = velocity:limit(self.maxSpeed)
 
-    if y > self.maxSpeed then
-        y = self.maxSpeed
-    elseif y < -self.maxSpeed then
-        y = -self.maxSpeed
-    end
-
-    self.body:setLinearVelocity(x, y)
+    self.body:setLinearVelocity(velocity.x, velocity.y)
 end
 
 function Ship:thrustPrograde()
     local dx = self.speed*math.cos(self.body:getAngle())
     local dy = self.speed*math.sin(self.body:getAngle())
 
-    self.body:applyForce(dx, dy)
+    local v = vector(dx, dy):limit(self.maxForce)
+
+    self.body:applyForce(v.x, v.y)
 end
 
 function Ship:thrustRetrograde()
@@ -245,4 +244,8 @@ function Ship:draw()
     love.graphics.setColor(255, 255, 255)
 
     love.graphics.draw(self.testShipImage, self.body:getX() , self.body:getY(), self.body:getAngle()+math.pi/2, self.scaleX, self.scaleY, self.testShipImage:getWidth()/2, self.testShipImage:getHeight()/2)
+
+    if self.controlScheme.predictionVector ~= nil then
+        love.graphics.circle("line", self.controlScheme.predictionVector.x, self.controlScheme.predictionVector.y, 8)
+    end
 end

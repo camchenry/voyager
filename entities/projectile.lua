@@ -20,8 +20,8 @@ function Projectile:initialize(parentShip, parentWeapon, origin)
 
     self.body = love.physics.newBody(the.system.world, origX, origY, "dynamic")
     local vx, vy = self.parentShip.body:getLinearVelocity()
-    local velX = 750*math.cos(angle+randAngle)+vx
-    local velY = 750*math.sin(angle+randAngle)+vy
+    local velX = 850*math.cos(angle+randAngle)+vx
+    local velY = 850*math.sin(angle+randAngle)+vy
     self.body:setLinearVelocity(velX, velY)
     self.body:setAngle(angle+randAngle)
     self.body:setMass(0.01)

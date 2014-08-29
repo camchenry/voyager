@@ -17,6 +17,8 @@ function Weapon:update(dt)
 end
 
 function Weapon:fire(origin)
+    assert(origin ~= nil, "did not include origin point for weapon:fire()")
+
     if self.heat <= 0 then
         self.heat = 1 
         local proj = Projectile:new(self.parentShip, self, origin, target)

@@ -185,6 +185,16 @@ function vector:trimmed(maxLen)
 	return self:clone():trim_inplace(maxLen)
 end
 
+function vector:limit(max)
+    local i = self:len() ~= 0 and (max / self:len()) or 0
+
+    if i < 1 then
+        return self*i
+    else
+        return self
+    end
+end
+
 
 -- the module
 return setmetatable({new = new, isvector = isvector, zero = zero},

@@ -1,113 +1,60 @@
 
-local READY = "ready"
-local RUNNING = "running"
-local FAILED = "failed"
+-- experimental state machinane implementation
+-- from: http://replayism.com/code/finite-state-machine-lua/
 
-Action = class("Action")
-function Action:initialize(task)
-    self.task = task
-    self.completed = false
-end
+local StateMachine = class("StateMachine")
 
-function Action:update(creatureAI)
-    if self.completed then return READY end
-    self.completed = self.task(creatureAI)
-    return RUNNING
-end
+function StateMachine:initialize(entity, currentState, previousState)
+    --only entity and currentState required
+    self.curState = currentState
+    self.prevState = previousState
+    self.entity = entity
 
-Condition = class("Condition")
-function Condition:initialize(condition)
-    self.condition = condition
-end
+    self.states = {}
 
-function Condition:update(creatureAI)
-    return self.condition(creatureAI) and READY or FAILED
-end
-
-Inverter = class("Inverter")
-function Inverter:initialize(cond)
-    self.condition = cond.condition
-end
-
-function Inverter:update(creatureAI)
-    return not self.condition(creatureAI) and READY or FAILED
-end
-
-Selector = class("Selector")
-function Selector:initialize(children)
-    self.children = children
-end
-
-function Selector:update(creatureAI)
-    for i, child in ipairs(self.children) do
-        local status = child:update(creatureAI)
-
-        if status == RUNNING then
-            return RUNNING
-        elseif status == READY then
-            if i == #self.children then
-                self:resetChildren()
-                return READY
-            end
-        end
-    end
-    return READY
-end
-
-function Selector:resetChildren()
-    for i, child in ipairs(self.children) do
-        child.completed = false
+    self.states[currentState.name] = currentState
+    if previousState then
+        self.states[previousState.name] = previousState
     end
 end
 
-Sequence = class("Sequence")
-function Sequence:initialize(children)
-    self.children = children
-    self.last = nil
-    self.completed = false
+function StateMachine:update()
+    self.curState.execute(self.entity)
 end
 
-function Sequence:update(creatureAI)
-    if self.completed then return READY end
-
-    local last = 1
-
-    if self.last and self.last ~= #self.children then
-        last = self.last + 1
-    end
-
-    for i = last, #self.children do
-        local child = self.children[i]:update(creatureAI)
-
-        if child == RUNNING then
-            self.last = i
-            return RUNNING
-        elseif child == FAILED then
-            self.last = nil
-            self:resetChildren()
-            return FAILED
-        elseif child == READY then
-            if i == #self.children then
-                self.last = nil
-                self:resetChildren()
-                self.completed = true
-                return READY
-            end
-        end
-    end
-
+function StateMachine:addState(newState)
+    self.states[newState.name] = newState
 end
 
-function Sequence:resetChildren()
-    for i, child in ipairs(self.children) do
-        child.completed = false
-    end
+function StateMachine:changeState(newStateName)
+    self.prevState = self.curState
+    self.curState.exit(self.entity)
+    self.curState = self.states[newStateName]
+    self.curState.enter(self.entity)
 end
 
--------------------
+function StateMachine:revertState()
+    self:changeState(self.prevState.name)
+end
 
-local TRUE = function() return true end
-local FALSE = function() return false end
+function StateMachine:isInState(stateName)
+    return stateName == self.curState.name
+end
+
+local State = class("State")
+
+function State:initialize(name, enter, execute, exit)
+    self.name = name
+
+    --param: entity
+    self.enter = enter or function() end
+    self.execute = execute or function() end
+    self.exit = exit or function() end
+end
+
+-----------------------------------------------
+
+
 
 ComputerControl = class("ComputerControl")
 
@@ -116,83 +63,80 @@ function ComputerControl:initialize(ship, world)
     self.world = world or the.system.world
 
     self:createAI()    
+    self.stateMachine = StateMachine:new(self.ship, self.pursuitState)
+    self.stateMachine:addState(self.pursuitState)
 end
 
 function ComputerControl:createAI()
-    local isShipFacingPlayer = Condition(function()
-        return self.ship:facing(the.player.ship)
-    end)
-    local isNotShipFacingPlayer = Inverter(isShipFacingPlayer)
-    local isNearPlayer = Condition(function()
-        local x, y = self.ship.body:getPosition()
-        local x2, y2 = the.player.ship.body:getPosition()
-        return math.sqrt((x2 - x)^2 + (y2 - y)^2) < 250
-    end)
-    local isPlayerAttacking = Condition(function()
-        if the.player.ship.destroyed then return false end
-        return the.player.ship:facing(self.ship, math.rad(35))
-    end)
+    local function predictedPosition(ship, target)
+        -- This will predict where a ship is going to be, with some amount of accuracy
 
-    local doFaceThePlayer = Action(function()
-        self.ship:turnToward(the.player.ship)
-        return self.ship:facing(the.player.ship)
-    end)
-    local doFireWeapon = Action(function()
-        self.ship.weapon:fire(self.ship)
-        return true
-    end)
-    local doMoveTowardPlayer = Action(function()
-        self.ship:thrustPrograde()
-        self.ship:thrustPrograde()
-        self.ship:thrustPrograde()
-        return true
-    end)
-    local doEvade = Action(function()
-        self.ship:thrustRetrograde()
-        self.ship:thrustRetrograde()
-        self.ship:thrustRetrograde()
-        return true
-    end)
+        local velocity = vector(ship.body:getLinearVelocity())
+        local position = vector(ship.body:getPosition())
 
-    self.seekAndDestroy = Selector{
-        Sequence{
-            isPlayerAttacking,
-            isNearPlayer,
-            doEvade
-        },
-        Sequence{
-            doFaceThePlayer,
-            doMoveTowardPlayer,
-            isShipFacingPlayer,
-            doFireWeapon
-        }
-    }
+        local targetVelocity = vector(target.body:getLinearVelocity())
+        local targetPosition = vector(target.body:getPosition())
 
-    self.stayCloseAndFollow = Selector{
-        Sequence{
-            doFaceThePlayer,
-            Inverter(isNearPlayer),
-            doMoveTowardPlayer,
-        }
-    }
+        -- T = how far ahead to predict (in frames)
+        -- If T is a constant, it will have problems when a target is very close,
+        -- because it's continuing to predict the target's position.
 
-    self.none = Selector{}
+        -- This can be solved by having a dynamic value for T based on distance to target
+        local distanceToTarget = (targetPosition - position):len()
+        -- for the sake of not being too difficult, the T value is fudged a little bit
+        local T = (distanceToTarget / ship.maxSpeed) * 1.15
+        local predicted = targetPosition + targetVelocity*T
+        return predicted
+    end
 
-    self.behavior = self.stayCloseAndFollow
+    local function distance(ship, target)
+        local position = vector(ship.body:getPosition())
+
+        return (target - position):len()
+    end
+
+    -- for more details on the steering behaviors
+    -- see: http://www.red3d.com/cwr/steer/gdc99/
+
+    self.pursuitState = State:new("pursuit")
+    self.pursuitState.execute = function(ship)
+
+        -- similar to leading a projectile shot, in order to effectively pursue
+        -- a target you need to predict where it's going to be
+
+        local selfVelocity = vector(ship.body:getLinearVelocity())
+        local selfPosition = vector(ship.body:getPosition())
+
+        local otherVelocity = vector(the.player.ship.body:getLinearVelocity())
+        local otherPosition = vector(the.player.ship.body:getPosition())
+
+        local predicted = predictedPosition(self.ship, the.player.ship)
+        self.predictionVector = predicted
+
+        -- how far away to start slowing down
+        local slowingRadius = 150
+
+        local distanceToTarget = (predicted - selfPosition):len()
+        local rampedSpeed = self.ship.maxSpeed * (distanceToTarget / slowingRadius)
+        local clippedSpeed = math.min(rampedSpeed, self.ship.maxSpeed)
+
+        local desired = (clippedSpeed / distanceToTarget) * (predicted - selfPosition)
+        --local desired = (predicted - selfPosition):normalized() * self.ship.speed*2
+        local steer = (desired - selfVelocity):limit(ship.maxForce)
+
+        ship.body:applyForce(steer.x, steer.y)
+        ship:turnToward(predicted - selfPosition)
+
+        if ship:facing(predicted, math.rad(15)) then
+            self.ship.weapon:fire(self.ship)
+        end
+    end
 end
 
 function ComputerControl:update(dt)
-    self.behavior:update()
-
-    if the.player.ship.destroyed then
-        self.behavior = self.none
-    end
+    self.stateMachine:update()
 end
 
 function ComputerControl:keypressed(key, isrepeat)
-    if the.player.ship:getCargoValue() > 6000 then
-        self.behavior = self.seekAndDestroy
-    else
-        self.behavior = self.seekAndDestroy
-    end
+
 end
