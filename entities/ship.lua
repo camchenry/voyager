@@ -26,16 +26,16 @@ function Ship:initialize(world, controlScheme)
     self.controlScheme = controlScheme or ComputerControl
     self.controlScheme = self.controlScheme:new(self, the.system.world)
 
-    -- cheating factor, to help AI overcome the fact that they are really dumb
+    -- cheating factor, for AI difficulty
     local m = 1
 
     if controlScheme == ComputerControl then
-        m = 2
+        m = 0.25
     end
 
     -- physics properties
     self.mass = 3
-    self.torque = 800*m
+    self.torque = 550*m
     self.angularDamping = 15
     self.inertia = 11 -- more inertia = more resistance to force
     self.speed = 350*m

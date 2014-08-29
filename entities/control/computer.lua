@@ -83,16 +83,16 @@ function ComputerControl:createAI()
 
         -- This can be solved by having a dynamic value for T based on distance to target
         local distanceToTarget = (targetPosition - position):len()
-        local T = (distanceToTarget / ship.maxSpeed)
+        -- for the sake of not being too difficult, the T value is fudged a little bit
+        local T = (distanceToTarget / ship.maxSpeed) * 1.15
         local predicted = targetPosition + targetVelocity*T
         return predicted
     end
 
     local function distance(ship, target)
         local position = vector(ship.body:getPosition())
-        local targetPosition = vector(target.body:getPosition())
 
-        return (targetPosition - position):len()
+        return (target - position):len()
     end
 
     -- for more details on the steering behaviors
@@ -113,17 +113,23 @@ function ComputerControl:createAI()
         local predicted = predictedPosition(self.ship, the.player.ship)
         self.predictionVector = predicted
 
-        local desired = (predicted - selfPosition):normalized() * self.ship.speed*2
+        -- how far away to start slowing down
+        local slowingRadius = 150
+
+        local distanceToTarget = (predicted - selfPosition):len()
+        local rampedSpeed = self.ship.maxSpeed * (distanceToTarget / slowingRadius)
+        local clippedSpeed = math.min(rampedSpeed, self.ship.maxSpeed)
+
+        local desired = (clippedSpeed / distanceToTarget) * (predicted - selfPosition)
+        --local desired = (predicted - selfPosition):normalized() * self.ship.speed*2
         local steer = (desired - selfVelocity):limit(ship.maxForce)
 
         ship.body:applyForce(steer.x, steer.y)
-        ship:turnToward(predicted)
+        ship:turnToward(predicted - selfPosition)
 
-        if distance(self.ship, the.player.ship) <= 900 and ship:facing(the.player.ship, math.rad(ship.weapon.spread*2)) then
+        if ship:facing(predicted, math.rad(15)) then
             self.ship.weapon:fire(self.ship)
         end
-
-        fx.text(love.timer.getDelta(), distance(self.ship, the.player.ship), 0, 200)
     end
 end
 
