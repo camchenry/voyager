@@ -50,7 +50,7 @@ function MissionController:getMissions(currentPlanet)
 				if #missions < missionNum then
 					if not self:find('Delivery', currentPlanet, planet.data.name) then
 						if math.random(5) == 1 then
-							table.insert(missions, {name = 'Delivery', pay = math.random(20000), desc = 'Take a package to '..planet.data.name..'.', start = currentPlanet, destination = planet.data.name})
+							table.insert(missions, Mission:new(currentPlanet, planet.data.name, k))
 						end
 					end
 				end
@@ -59,4 +59,14 @@ function MissionController:getMissions(currentPlanet)
 	end
 	
 	return missions
+end
+
+
+Mission = class('Mission')
+function Mission:initialize(start, destinationPlanet, destinationSystem)
+	self.name = 'Delivery'
+	self.pay = math.random(5000, 20000)
+	self.desc = 'Take a package to '..destinationPlanet..' in '..destinationSystem..'.'
+	self.start = start
+	self.destination = destinationPlanet
 end
