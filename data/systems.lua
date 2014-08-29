@@ -25,6 +25,16 @@ STAR_SYSTEMS["Sol"] = {
 				pointer = 'Mars.png'
             }
         },
+		{
+            class = "Planet", 
+            data = {
+                name  = "Pluto", 
+                x = 1900, 
+                y = -2400,
+				
+				pointer = 'Pluto.png'
+            }
+        },
     },
 }
 
@@ -43,6 +53,16 @@ STAR_SYSTEMS["Proxima Centauri"] = {
 				pointer = 'Belinov.png'
             }
         },
+		{
+            class = "Planet",
+            data = {
+                name = "Joliv",
+                x = -700,
+                y = 300,
+				
+				pointer = 'Joliv.png'
+            }
+        },
     },
 }
 
@@ -57,7 +77,18 @@ STAR_SYSTEMS["Belith"] = {
     x = -200,
     y = 200,
 
-    objects = {},
+    objects = {
+		{
+            class = "Planet",
+            data = {
+                name = "Lokuri",
+                x = -400,
+                y = -1100,
+				
+				pointer = 'Lokuri.png'
+            }
+        },
+	},
 }
 
 STAR_SYSTEMS["Shalim"] = {

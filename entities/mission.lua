@@ -43,13 +43,15 @@ function MissionController:getMissions(currentPlanet)
 
 	local starSystems = require 'data.systems'
 	
-	local missionNum = 2
+	local missionNum = 5
 	for k, system in pairs(starSystems) do
 		for j, planet in pairs(system.objects) do
 			if planet.data.name ~= currentPlanet then
 				if #missions < missionNum then
 					if not self:find('Delivery', currentPlanet, planet.data.name) then
-						table.insert(missions, {name = 'Delivery', pay = math.random(20000), desc = 'Take a package to '..planet.data.name..'.', start = currentPlanet, destination = planet.data.name})
+						if math.random(5) == 1 then
+							table.insert(missions, {name = 'Delivery', pay = math.random(20000), desc = 'Take a package to '..planet.data.name..'.', start = currentPlanet, destination = planet.data.name})
+						end
 					end
 				end
 			end
