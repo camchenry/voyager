@@ -44,13 +44,13 @@ function MissionController:getMissions(currentPlanet)
 	local starSystems = require 'data.systems'
 	
 	local missionNum = 5
-	for k, system in pairs(starSystems) do
+	for systemName, system in pairs(starSystems) do
 		for j, planet in pairs(system.objects) do
 			if planet.data.name ~= currentPlanet then
 				if #missions < missionNum then
 					if not self:find('Delivery', currentPlanet, planet.data.name) then
 						if math.random(5) == 1 then
-							table.insert(missions, Mission:new(currentPlanet, planet.data.name, k))
+							table.insert(missions, Mission:new(currentPlanet, planet.data.name, systemName))
 						end
 					end
 				end
@@ -61,12 +61,30 @@ function MissionController:getMissions(currentPlanet)
 	return missions
 end
 
+function MissionController:getMissionsInSystem(system)
+	local missions = {}
+
+	-- loop through all missions
+    for k, mission in pairs(self.missions) do 
+    	-- loop through all system objects
+    	for k, obj in pairs(starmap.rawSystemData[system].objects) do
+    		-- check to see if a mission matches up with one of the planets
+    		if mission.destination == obj.data.name then
+    			table.insert(missions, mission)
+    		end
+    	end
+    end
+
+    return missions
+end
+
 
 Mission = class('Mission')
 function Mission:initialize(start, destinationPlanet, destinationSystem)
-	self.name = 'Delivery'
+	self.name = 'Delivery to '..destinationPlanet
 	self.pay = math.random(5000, 20000)
 	self.desc = 'Take a package to '..destinationPlanet..' in '..destinationSystem..'.'
 	self.start = start
 	self.destination = destinationPlanet
+	self.destinationSystem = destinationSystem
 end

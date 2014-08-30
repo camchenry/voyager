@@ -29,18 +29,18 @@ function Ship:initialize(world, controlScheme)
     -- cheating factor, for AI difficulty
     local m = 1
 
-    if controlScheme == ComputerControl then
-        m = 0.25
+    if self.controlScheme:isInstanceOf(ComputerControl) then
+        m = 0.65
     end
 
     -- physics properties
     self.mass = 3
-    self.torque = 550*m
+    self.torque = 450*m
     self.angularDamping = 15
     self.inertia = 11 -- more inertia = more resistance to force
-    self.speed = 350*m
+    self.speed = 150
     self.maxSpeed = 250
-    self.maxForce = 350*m
+    self.maxForce = 150*m
 
     -- ship properties
     self.maxCargo = 20

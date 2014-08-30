@@ -87,6 +87,14 @@ function StarSystem:closestObject(x, y, radius)
     return obj, min
 end
 
+function StarSystem:hasPlanet(planet)
+    for k, obj in pairs(self.objects) do
+        if obj.name == planet then
+            return true
+        end
+    end
+end
+
 function StarSystem:keypressed(key, isrepeat)
     for i, entity in pairs(self.entities) do
         if entity.keypressed ~= nil then

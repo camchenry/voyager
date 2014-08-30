@@ -13,8 +13,11 @@ function starmap:init()
 end
 
 function starmap:enter()
-    self.translateX = love.window.getWidth()/2 - the.system.x
-    self.translateY = love.window.getHeight()/2 - the.system.y
+    -- entering the starmap again shouldn't reset the translation if you have a system selected
+    if self.selectedSystem == nil then
+        self.translateX = love.window.getWidth()/2 - the.system.x
+        self.translateY = love.window.getHeight()/2 - the.system.y
+    end
 	
 	self.centerX, self.centerY = love.window.getWidth()/2, love.window.getHeight()/2
 
@@ -24,6 +27,7 @@ function starmap:enter()
     love.mouse.setVisible(false)
 	
 	self.first = true
+    self.hoveredSystem = nil
 end
 
 function starmap:leave()
@@ -57,10 +61,16 @@ function starmap:update(dt)
 		mouseX, mouseY = centerX, centerY
 	end
 	
-	
-    local dx, dy = centerX - mouseX, centerY - mouseY
+    local dx, dy = 0, 0
+
+    -- mouse can't move anything when you have selected a system
+    if self.selectedSystem == nil then
+        dx, dy = centerX - mouseX, centerY - mouseY
+    end
+
 	local newX = self.translateX + dx
 	local newY = self.translateY + dy
+
 	
 	-- checks if distance is greater than max, sets it to max
 	local dist = math.dist(centerX, centerY, newX, newY)
@@ -73,15 +83,23 @@ function starmap:update(dt)
 	
     self.translateX = newX
     self.translateY = newY
-	
-
-    if self.selectedSystem ~= nil then
-        self.translateX = -self.rawSystemData[self.selectedSystem].x + self.centerX
-        self.translateY = -self.rawSystemData[self.selectedSystem].y + self.centerY
-    end
 
     self.mouseX = self.translateX - centerX
     self.mouseY = self.translateY - centerY
+
+    -- check to see which system is nearest to the mouse, for hover info
+    if self.selectedSystem == nil then
+        for systemName, system in pairs(self.rawSystemData) do
+            local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
+
+            if dist < 45 then
+                self.hoveredSystem = systemName
+                break
+            else
+                self.hoveredSystem = nil
+            end
+        end
+    end
 end
 
 function starmap:keypressed(key, isrepeat)
@@ -92,15 +110,25 @@ end
 
 function starmap:mousepressed(x, y, button)
     if button == "l" then
-        local mouseX, mouseY = self.centerX, self.centerY
+        -- finds a nearby system and selects it, otherwise deselects the current system
 
+        -- if already selected, deselect
         if self.selectedSystem ~= nil then self.selectedSystem = nil return end
+
+        local mouseX, mouseY = self.centerX, self.centerY
 
         for systemName, system in pairs(self.rawSystemData) do
             local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
 
-            if dist < 20 and systemName ~= the.player.location then
+            if dist < 45 and systemName ~= the.player.location then
+
                 self.selectedSystem = systemName
+
+                -- tweens the current translation towards the selected system, looks nice
+                tween(0.25, self, {
+                    translateX = -self.rawSystemData[self.selectedSystem].x + self.centerX,
+                    translateY = -self.rawSystemData[self.selectedSystem].y + self.centerY
+                    })
                 break
             else
                 self.selectedSystem = nil
@@ -109,6 +137,51 @@ function starmap:mousepressed(x, y, button)
     elseif button == "r" then
         self.selectedSystem = nil
     end
+end
+
+function starmap:hoverInfo(system)
+    love.graphics.setColor(255, 255, 255)
+
+    local x, y = self.rawSystemData[system].x+self.translateX, self.rawSystemData[system].y+self.translateY
+
+    if self.selectedSystem ~= nil then
+        love.graphics.setColor(0, 255, 0)
+        love.graphics.circle("line", x, y, 8)
+
+        love.graphics.setColor(255, 255, 255)
+        love.graphics.setFont(fontBold[16])
+        love.graphics.print("READY FOR JUMP", x + 17, y - 15)
+    end
+
+    local objects = self.rawSystemData[system].objects
+
+    love.graphics.setFont(font[18])
+
+    if #objects > 0 then
+        love.graphics.print("PLANETS", x+17, y+10)
+
+        for k, planet in pairs(self.rawSystemData[system].objects) do
+            love.graphics.print("- "..planet.data.name, x + 25, y + 15 + (k*20))
+        end
+    else
+        love.graphics.print("NO OBJECTS", x + 17, y + 10)
+    end
+
+    y = y + (#objects+1)*20
+
+    local missions = game.missionController:getMissionsInSystem(system)
+
+    if #missions > 0 then
+        love.graphics.print("MISSIONS", x+17, y+25)
+    
+        for k, mission in pairs(game.missionController:getMissionsInSystem(system)) do 
+            love.graphics.print('- '..mission.name, x+25, y+(k*25)+30)
+        end
+    end
+end
+
+function starmap:selectedInfo(system)
+
 end
 
 function starmap:draw()
@@ -120,26 +193,14 @@ function starmap:draw()
     love.graphics.line(love.window.getWidth()/2, 0, love.window.getWidth()/2, love.window.getHeight())
     love.graphics.line(0, love.window.getHeight()/2, love.window.getWidth(), love.window.getHeight()/2)
 
-    -- selector circle thing
+    -- displays info for when you have already selected a system
     if self.selectedSystem ~= nil then
-        love.graphics.setColor(0, 255, 0)
-        love.graphics.circle("fill", self.centerX, self.centerY, 8)
+        self:hoverInfo(self.selectedSystem)
+    end
 
-        love.graphics.setColor(255, 255, 255)
-        love.graphics.setFont(fontLight[16])
-        love.graphics.print("SELECTED FOR JUMP", self.centerX + 17, self.centerY - 15)
-
-        local objects = self.rawSystemData[self.selectedSystem].objects
-
-        if #objects > 0 then
-            love.graphics.print("PLANETS", self.centerX + 17, self.centerY+10)
-            love.graphics.line(self.centerX+17, self.centerY+33, self.centerX+100, self.centerY+33)
-            for k, planet in pairs(self.rawSystemData[self.selectedSystem].objects) do
-                love.graphics.print("- "..planet.data.name, self.centerX+25, self.centerY + 13 + (k*15))
-            end
-        else
-            love.graphics.print("NO OBJECTS", self.centerX + 17, self.centerY+10)
-        end
+    -- displays info for when you are just hovering near a system
+    if self.hoveredSystem ~= nil then
+        self:hoverInfo(self.hoveredSystem)
     end
 
     love.graphics.setColor(255, 255, 255)
@@ -153,11 +214,7 @@ function starmap:draw()
         love.graphics.setColor(255, 255, 255)
 
         love.graphics.circle("line", system.x, system.y, 10)
-        if systemName == self.selectedSystem then
-            love.graphics.setFont(font[16])
-        else
-            love.graphics.setFont(fontLight[16])
-        end
+        love.graphics.setFont(fontLight[16])
 
         love.graphics.print(systemName, system.x+20, system.y-35)
 
@@ -173,7 +230,14 @@ function starmap:draw()
 
         -- line for text to sit on
         love.graphics.setColor(200, 200, 200)
-        love.graphics.line(system.x+7, system.y-7, system.x+15, system.y-12, system.x+love.graphics.getFont():getWidth(systemName)+25, system.y-12)
+        love.graphics.line(system.x+7, system.y-7, system.x+15, system.y-12, system.x+love.graphics.getFont():getWidth(systemName)+17, system.y-12)
+
+        -- active mission arrow
+        local missions = game.missionController:getMissionsInSystem(systemName)
+        if #missions > 0 then
+            love.graphics.setColor(240, 35, 17)
+            love.graphics.polygon("fill", system.x-5, system.y-25, system.x+5, system.y-25, system.x, system.y-15)
+        end
     end
 
     love.graphics.pop()
