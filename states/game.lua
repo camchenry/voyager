@@ -172,7 +172,7 @@ function game:draw()
 		end
 	end
 	
-    love.graphics.translate(self.translateX, self.translateY)
+    love.graphics.translate(math.floor(self.translateX), math.floor(self.translateY))
     -- things that should be translated
 
     love.graphics.setColor(255, 255, 255)
