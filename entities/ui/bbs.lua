@@ -99,7 +99,7 @@ function BBS:draw()
 		love.graphics.print('PAYMENT: '..option.pay..'CR', x+5, y+65)
 
 		love.graphics.setFont(font[36])
-		love.graphics.print(option.desc, x+5, y+100)
+		love.graphics.print(option.description, x+5, y+100)
 
 
 		self.acceptButton:draw() -- will not draw accept button if there are no available missions

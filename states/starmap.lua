@@ -1,13 +1,22 @@
 starmap = {}
 
-function starmap:init()
-    self.rawSystemData = require 'data.systems'
+starmap.rawSystemData = require 'data.systems'
+assert(starmap.rawSystemData ~= nil)
 
+function starmap:init()
     self.translateX = love.window.getWidth()/2
     self.translateY = love.window.getHeight()/2
 
     self.mouseX = 0
     self.mouseY = 0
+
+    -- distance from which you can select a system
+    self.selectionDistance = 45
+
+    -- distance from which you can view the hover info
+    --   if hoverDistance is bigger than selectionDistance then you can view the hover 
+    --   info before you can actually select the system
+    self.hoverDistance = 45
 	
 	self.maxDist = 600
 end
@@ -38,20 +47,75 @@ function starmap:focus(f)
 	if f then self.first = true end
 end
 
+-- returns the angle from the current system to another system
 function starmap:angleTo(system)
     local x1, y1 = self.rawSystemData[the.player.location].x, self.rawSystemData[the.player.location].y
     local x2, y2 = self.rawSystemData[system].x, self.rawSystemData[system].y
     return math.atan2(y2 - y1, x2 - x1)
 end
 
+-- returns the distance from the current system to another system
+function starmap:distanceTo(system)
+    local x1, y1 = self.rawSystemData[the.player.location].x, self.rawSystemData[the.player.location].y
+    local x2, y2 = self.rawSystemData[system].x, self.rawSystemData[system].y
+    return math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
+end
+
+-- returns a random system name (string)
+function starmap:getRandomSystem()
+    local systemNames = {}
+
+    assert(self.rawSystemData ~= nil)
+
+    for k, v in pairs(self.rawSystemData) do
+        table.insert(systemNames, k)
+    end
+
+    local systemName = systemNames[table.random(systemNames)]
+
+    assert(type(systemName) == "string")
+
+    return systemName
+end
+
+-- returns a random planet name (string)
+function starmap:getRandomPlanet(system)
+    local system = self:getRandomSystem()
+    local systemData = self.rawSystemData[system]
+    local systemObjects = systemData.objects
+
+    -- if you get a random system with no planets, select a different one
+    while #systemObjects == 0 do
+        system = self:getRandomSystem()
+        systemData = self.rawSystemData[system]
+        systemObjects = systemData.objects
+    end
+
+    assert(system ~= nil)
+
+    local planetNames = {}
+    for k, planet in pairs(systemObjects) do
+        table.insert(planetNames, planet.data.name)
+    end
+
+    local planetName = planetNames[table.random(planetNames)]
+
+    assert(type(planetName) == "string")
+
+    return planetName, system
+end
+
 function starmap:update(dt)
     local centerX, centerY = self.centerX, self.centerY
-    if love.window.hasMouseFocus() then -- Prevents the mouse being grabbed by the game while alt-tabbing
+    local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
+
+    -- Prevents the mouse being grabbed by the game while alt-tabbing
+    if love.window.hasMouseFocus() then
 		love.mouse.setPosition(centerX, centerY)
 	end
 
-	local mouseX, mouseY = love.mouse.getX(), love.mouse.getY()
-	if self.first then -- The first time through, the mouse will always be at the center of the screen
+    -- The first time through, the mouse will always be at the center of the screen
+	if self.first then
 		self.first = false
 		mouseX, mouseY = centerX, centerY
 	end
@@ -92,7 +156,7 @@ function starmap:update(dt)
         for systemName, system in pairs(self.rawSystemData) do
             local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
 
-            if dist < 45 then
+            if dist < self.selectionDistance then
                 self.hoveredSystem = systemName
                 break
             else
@@ -120,7 +184,7 @@ function starmap:mousepressed(x, y, button)
         for systemName, system in pairs(self.rawSystemData) do
             local dist = math.sqrt((system.x + self.translateX - mouseX)^2 + (system.y + self.translateY - mouseY)^2)
 
-            if dist < 45 and systemName ~= the.player.location then
+            if dist < self.selectionDistance and systemName ~= the.player.location then
 
                 self.selectedSystem = systemName
 
@@ -241,6 +305,8 @@ function starmap:draw()
     end
 
     love.graphics.pop()
+
+    love.graphics.print(self:getRandomPlanet(), 0, 200)
 
     -- center indicator
     local centerX, centerY = self.centerX, self.centerY

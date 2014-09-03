@@ -130,3 +130,24 @@ end
 function round(what, precision)
    return math.floor(what*math.pow(10,precision)+0.5) / math.pow(10,precision)
 end
+
+function table.random(t, associative)
+  associative = associative or false
+  if associative then
+      local t2 = {}
+
+      for k in pairs(t) do
+          t2[#t2 + 1] = k
+      end
+      
+      local key = table.random(t2)
+
+      -- key, value
+      return key, t[key]
+  else
+      local key = math.random(1, #t)
+
+      -- key, value
+      return key, t[key]
+  end
+end
