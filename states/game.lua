@@ -183,6 +183,11 @@ function game:draw()
         love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
     end
 
+    love.graphics.origin()
+
+    -- drawing the player with a floored translation causes the ship to look jittery
+    love.graphics.translate(self.translateX, self.translateY)
+
     the.system:draw()
     if not the.player.ship.destroyed then
         the.player.ship:draw()
