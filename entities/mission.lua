@@ -18,14 +18,16 @@ end
 -- tries to accept a mission
 -- returns whether you can accept or not (boolean), and the problem (string)
 function MissionController:acceptMission(mission)
-	local canAccept, problem = self:canAccept(mission)
+	local canAccept, problem = self:canAcceptMission(mission)
 
 	if canAccept then
 		mission.accepted = true
-		table.insert(self.mission, mission)
+		table.insert(self.missions, mission)
 	end
 
-	problem = self.PROBLEM_MESSAGES[problem] or nil
+	if problem ~= nil then
+		problem = MissionController.PROBLEM_MESSAGES[problem]
+	end
 
 	return canAccept, problem
 end
@@ -33,7 +35,7 @@ end
 -- returns whether you can accept the mission or not (boolean), and why not (number)
 function MissionController:canAcceptMission(mission)
 	-- at least 1 ton of cargo space
-	if not the.player.ship.maxCargo ~= the.player.ship:getCargoMass() then
+	if the.player.ship.maxCargo == the.player.ship:getCargoMass() then
 		return false, NOT_ENOUGH_CARGO_SPACE
 	end
 
