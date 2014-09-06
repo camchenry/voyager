@@ -54,6 +54,8 @@ function Ship:initialize(world, controlScheme)
     self.jumpCountdown = 0
     self.engagingJump = false
 
+    self.faction = "Federation"
+
     -- ship combat properties
     self.maxHull = 1000000
     self.hull = self.maxHull
@@ -221,9 +223,20 @@ end
 function Ship:takeDamage(projectile)
     self.hull = self.hull - projectile.parentWeapon.damage
 
+    if not self.jumping then
+        local vx, vy = projectile.body:getLinearVelocity()
+        self.body:applyLinearImpulse(vx*0.02, vy*0.02)
+    end
+
     if self.hull <= 0 then
         self.hull = 0
         self.destroyed = true
+    end
+
+    if projectile.parentShip == the.player.ship then
+        if self.faction ~= nil then
+            the.player:changeAlignment(self.faction, -15)
+        end
     end
 end
 

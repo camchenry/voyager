@@ -10,10 +10,21 @@ function Pilot:initialize(first, last, gender)
 
     self.ship = Ship:new(the.system.world, PlayerControl)
     self.ship.fixture:setMask(1)
+    self.ship.faction = nil
     self.location = "Sol"
     self.planet = nil
 
+    -- arbitrary faction alignments that can change
+    self.alignment = {
+        ["Federation"] = 0,
+        ["Rebel"] = 0,
+    }
+
     self.credits = 25000
+end
+
+function Pilot:changeAlignment(faction, amount)
+    self.alignment[faction] = self.alignment[faction] + amount
 end
 
 function Pilot:jump()

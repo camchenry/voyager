@@ -62,9 +62,13 @@ function ComputerControl:initialize(ship, world)
     self.ship = ship
     self.world = world or the.system.world
 
-    self:createAI()    
-    self.stateMachine = StateMachine:new(self.ship, self.pursuitState)
+    self:createAI()
+    self.stateMachine = StateMachine:new(self.ship, self.nilState)
+    self.stateMachine:addState(self.nilState)
     self.stateMachine:addState(self.pursuitState)
+    self.stateMachine:addState(self.passiveState)
+
+    self.stateMachine:changeState("passive")
 end
 
 function ComputerControl:createAI()
@@ -97,6 +101,50 @@ function ComputerControl:createAI()
 
     -- for more details on the steering behaviors
     -- see: http://www.red3d.com/cwr/steer/gdc99/
+
+    self.nilState = State:new("nil")
+
+    self.passiveState = State:new("passive")
+    self.passiveState.enter = function(ship)
+        local _, planet = table.random(the.system.objects)
+
+        if planet ~= nil then
+            self.passiveState.target = planet
+        else
+            self.passiveState.target = {x=math.random(-1000, 1000), y=math.random(-1000, 1000)}
+        end
+    end
+    self.passiveState.execute = function(ship)
+        local selfVelocity = vector(ship.body:getLinearVelocity())
+        local selfPosition = vector(ship.body:getPosition())
+
+        local targetPosition = vector(self.passiveState.target.x, self.passiveState.target.y)
+
+        -- how far away to start slowing down
+        local slowingRadius = self.ship.maxSpeed*3
+
+        local distanceToTarget = (targetPosition - selfPosition):len()
+        local rampedSpeed = self.ship.maxSpeed * (distanceToTarget / slowingRadius)
+        local clippedSpeed = math.min(rampedSpeed, self.ship.maxSpeed)
+
+        local desired = (clippedSpeed / distanceToTarget) * (targetPosition - selfPosition)
+        local steer = (desired - selfVelocity):limit(ship.maxForce)
+
+        self.predictionVector = desired + selfPosition
+
+        if distanceToTarget < 100 and selfVelocity:len() < 25 then
+            ship:stop()
+        end
+
+        ship.body:applyForce(steer.x, steer.y)
+        ship:turnToward(targetPosition - selfPosition)
+
+        if self.ship.faction ~= nil then
+            if the.player.alignment[self.ship.faction] < -100 then
+                self.stateMachine:changeState("pursuit")
+            end
+        end
+    end
 
     self.pursuitState = State:new("pursuit")
     self.pursuitState.execute = function(ship)

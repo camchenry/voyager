@@ -139,6 +139,8 @@ function game:keypressed(key, isrepeat)
     if key == "escape" then
         if self.selectedObject ~= nil then
             self.selectedObject = nil
+        else
+            state.push(pause)
         end
     end
 
@@ -183,12 +185,13 @@ function game:draw()
         love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
     end
 
+    the.system:draw()
+
     love.graphics.origin()
 
     -- drawing the player with a floored translation causes the ship to look jittery
     love.graphics.translate(self.translateX, self.translateY)
 
-    the.system:draw()
     if not the.player.ship.destroyed then
         the.player.ship:draw()
     end
@@ -220,5 +223,5 @@ function game:draw()
     love.graphics.setFont(font[18])
 	love.graphics.setColor(255, 255, 255)
 	love.graphics.print(love.timer.getFPS(), 0, 0)
-    love.graphics.print(the.player.ship:getCargoValue(), 0, 40)
+    love.graphics.print(dump(the.player.alignment), 0, 40)
 end

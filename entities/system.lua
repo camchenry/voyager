@@ -33,6 +33,11 @@ function StarSystem:load(name)
     self.name = name
     self.x = systemData.x
     self.y = systemData.y
+    self.faction = systemData.faction
+    if self.faction == nil then
+        self.faction = "Neutral"
+    end
+
     self.objects = {}
     self.entities = {}
     self.projectiles = {}

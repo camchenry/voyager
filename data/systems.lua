@@ -4,6 +4,8 @@ STAR_SYSTEMS["Sol"] = {
     x = 0,
     y = 0,
 
+    faction = "Federation",
+
     objects = {
         {
             class = "Planet", 
@@ -42,6 +44,8 @@ STAR_SYSTEMS["Proxima Centauri"] = {
     x = 250,
     y = -200,
 
+    faction = "Federation",
+
     objects = {
         {
             class = "Planet",
@@ -70,12 +74,16 @@ STAR_SYSTEMS["Alpha Centauri"] = {
     x = -100,
     y = -250,
 
+    faction = "Federation",
+
     objects = {}
 }
 
 STAR_SYSTEMS["Belith"] = {
     x = -200,
     y = 200,
+
+    faction = "Federation",
 
     objects = {
 		{
@@ -101,6 +109,8 @@ STAR_SYSTEMS["Shalim"] = {
 STAR_SYSTEMS["Alatar"] = {
     x = 280,
     y = 330,
+
+    faction = "Rebel",
 
     objects = {},
 }

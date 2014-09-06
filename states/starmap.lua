@@ -11,14 +11,17 @@ function starmap:init()
     self.mouseY = 0
 
     -- distance from which you can select a system
-    self.selectionDistance = 45
+    self.selectionDistance = 75
 
     -- distance from which you can view the hover info
     --   if hoverDistance is bigger than selectionDistance then you can view the hover 
     --   info before you can actually select the system
-    self.hoverDistance = 45
+    self.hoverDistance = 75
+
+    -- radius of the faction color circle
+    self.factionCircleDistance = 100
 	
-	self.maxDist = 600
+	self.maxDist = 750
 end
 
 function starmap:enter()
@@ -59,6 +62,12 @@ function starmap:distanceTo(system)
     local x1, y1 = self.rawSystemData[the.player.location].x, self.rawSystemData[the.player.location].y
     local x2, y2 = self.rawSystemData[system].x, self.rawSystemData[system].y
     return math.sqrt((x2 - x1)^2 + (y2 - y1)^2)
+end
+
+-- takes a string of a system name
+-- returns the raw data associated with that name
+function starmap:getData(system)
+    return self.rawSystemData[system]
 end
 
 -- returns a random system name (string)
@@ -231,21 +240,42 @@ function starmap:hoverInfo(system)
         love.graphics.print("NO OBJECTS", x + 17, y + 10)
     end
 
-    y = y + (#objects+1)*20
-
     local missions = game.missionController:getMissionsInSystem(system)
 
     if #missions > 0 then
-        love.graphics.print("MISSIONS", x+17, y+25)
+        love.graphics.print("MISSIONS", x+17, my+25)
+
+        local my = y + (#objects+1)*20
     
         for k, mission in pairs(game.missionController:getMissionsInSystem(system)) do 
-            love.graphics.print('- '..mission.name, x+25, y+(k*25)+30)
+            love.graphics.print('- '..mission.name, x+25, my+(k*25)+30)
         end
     end
+
+    ----- factions
+
+    love.graphics.setColor(255, 255, 255)
+
+    local faction = self:getData(system).faction
+
+    if faction == "Federation" then
+        love.graphics.setColor(127, 127, 255)
+        love.graphics.setFont(font[24])
+        love.graphics.print("Federation", x+17, y-70)
+    elseif faction == "Rebel" then
+        love.graphics.setColor(255, 127, 127)
+        love.graphics.setFont(font[24])
+        love.graphics.print("Rebel", x+17, y-70)
+    else
+        love.graphics.setColor(127, 127, 127)
+        love.graphics.setFont(font[24])
+        love.graphics.print("Neutral", x+17, y-70)
+    end
+
 end
 
 function starmap:selectedInfo(system)
-
+    self:hoverInfo(system)
 end
 
 function starmap:draw()
@@ -257,16 +287,6 @@ function starmap:draw()
     love.graphics.line(love.window.getWidth()/2, 0, love.window.getWidth()/2, love.window.getHeight())
     love.graphics.line(0, love.window.getHeight()/2, love.window.getWidth(), love.window.getHeight()/2)
 
-    -- displays info for when you have already selected a system
-    if self.selectedSystem ~= nil then
-        self:hoverInfo(self.selectedSystem)
-    end
-
-    -- displays info for when you are just hovering near a system
-    if self.hoveredSystem ~= nil then
-        self:hoverInfo(self.hoveredSystem)
-    end
-
     love.graphics.setColor(255, 255, 255)
     love.graphics.setLineWidth(1)
 
@@ -275,6 +295,19 @@ function starmap:draw()
     love.graphics.translate(self.translateX, self.translateY)
 
     for systemName, system in pairs(self.rawSystemData) do
+        love.graphics.setColor(255, 255, 255)
+
+        -- circles to show what faction owns that system
+        if system.faction == "Federation" then
+            love.graphics.setColor(2, 91, 156, 100)
+        elseif system.faction == "Rebel" then
+            love.graphics.setColor(240, 35, 17, 100)
+        else
+            love.graphics.setColor(0, 0, 0, 0)
+        end
+
+        love.graphics.circle("fill", system.x, system.y, self.factionCircleDistance)
+
         love.graphics.setColor(255, 255, 255)
 
         love.graphics.circle("line", system.x, system.y, 10)
@@ -294,7 +327,7 @@ function starmap:draw()
 
         -- line for text to sit on
         love.graphics.setColor(200, 200, 200)
-        love.graphics.line(system.x+7, system.y-7, system.x+15, system.y-12, system.x+love.graphics.getFont():getWidth(systemName)+17, system.y-12)
+        love.graphics.line(system.x+7, system.y-7, system.x+15, system.y-12, system.x+love.graphics.getFont():getWidth(systemName)+19, system.y-12)
 
         -- active mission arrow
         local missions = game.missionController:getMissionsInSystem(systemName)
@@ -306,7 +339,15 @@ function starmap:draw()
 
     love.graphics.pop()
 
-    love.graphics.print(self:getRandomPlanet(), 0, 200)
+    -- displays info for when you have already selected a system
+    if self.selectedSystem ~= nil then
+        self:selectedInfo(self.selectedSystem)
+    end
+
+    -- displays info for when you are just hovering near a system
+    if self.hoveredSystem ~= nil then
+        self:hoverInfo(self.hoveredSystem)
+    end
 
     -- center indicator
     local centerX, centerY = self.centerX, self.centerY

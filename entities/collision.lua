@@ -29,6 +29,9 @@ function Collision.static.findProjectile(fixture)
     end
 end
 
+
+-- this is in dire need of refactoring
+
 function Collision.beginContact(objA, objB, contact)
     if objA:getUserData() == "projectile" and objB:getUserData() == "ship" then
         local ship = Collision.findShip(objB)
