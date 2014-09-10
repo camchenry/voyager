@@ -13,7 +13,14 @@ function Radar:initialize()
 end
 
 function Radar:update(dt)
-
+    self.x = 90
+    self.y = love.window.getHeight() - 90
+    
+    -- Size of the radar on-screen
+    self.radius = 80
+    if love.window.getWidth() >= 1920 then
+        self.radius = 160
+    end
 end
 
 function Radar:findLocal(x1, y1, x2, y2, iconRadius)

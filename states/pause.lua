@@ -59,6 +59,9 @@ end
 function pause:update(dt)
     -- if the screen resolution changed, the menu needs to be repositioned
     if (love.graphics.getWidth() ~= self.x*2 + self.width) or (love.graphics.getHeight() ~= self.y*2 + self.height) then
+
+        self.width = math.max(love.graphics.getWidth()/4, 250)
+
         self.x = love.graphics.getWidth()/2 - self.width/2
         self.y = love.graphics.getHeight()/2 - self.height/2
 
