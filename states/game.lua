@@ -12,14 +12,6 @@ function game:init()
     -- by setting the game up with a reset, it ensures that resetting will 
     -- take the game back to the original state
     self:reset()
-	
-	self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
-	self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
-	self.starImages = {}
-	for i = 1, 2 do
-		self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
-		self.starImages[i]:setWrap('repeat')
-	end
 end
 
 function game:reset()
@@ -32,6 +24,32 @@ function game:reset()
     for i=1, 10 do
         the.economy:update()
     end
+
+    self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
+    self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
+    self.starImages = {}
+    for i = 1, 2 do
+        self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
+        self.starImages[i]:setWrap('repeat')
+    end
+end
+
+-- reset specifically for pause menu, because the screen resolution can change
+function game:pauseReset()
+    self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
+    self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
+    self.starImages = {}
+    for i = 1, 2 do
+        self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
+        self.starImages[i]:setWrap('repeat')
+    end
+
+    if not the.player.ship.destroyed then
+        self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
+        self.translateY = -the.player.ship.body:getY() + love.window.getHeight()/2
+    end
+
+    self.radar:update(love.timer.getDelta())
 end
 
 function game:enter()

@@ -48,7 +48,7 @@ end
 function pause:enter(prev)
     self.prevState = prev
 
-    self.width = math.max(love.graphics.getWidth()/4, 250)
+    self.width = math.max(love.graphics.getWidth()*0.15, 250)
 
     self.x = love.graphics.getWidth()/2 - self.width/2
     self.y = love.graphics.getHeight()/2 - self.height/2
@@ -66,6 +66,7 @@ function pause:update(dt)
         self.y = love.graphics.getHeight()/2 - self.height/2
 
         self:positionButtons()
+        game:pauseReset()
     end
 end
 
