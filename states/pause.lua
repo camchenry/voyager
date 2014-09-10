@@ -27,26 +27,43 @@ pause.items = {
 pause.buttons = {}
 
 function pause:init()
-    self.width = 200
-    self.height = 500
+    self.width = math.max(love.graphics.getWidth()/4, 250)
+    self.height = 350
 
     self.x = love.graphics.getWidth()/2 - self.width/2
     self.y = love.graphics.getHeight()/2 - self.height/2
 
     for i, item in pairs(self.items) do
-        table.insert(self.buttons, Button:new(item.title, self.x, self.y + 50*(i-1), nil, nil, font[32], item.action))
+        table.insert(self.buttons, Button:new(item.title, self.x + 10, self.y + 50*(i-1), nil, nil, font[32], item.action))
+    end
+end
+
+function pause:positionButtons()
+    for i, button in pairs(self.buttons) do
+        button.x = self.x + 10
+        button.y = self.y + 50*(i-1)
     end
 end
 
 function pause:enter(prev)
     self.prevState = prev
 
+    self.width = math.max(love.graphics.getWidth()/4, 250)
+
     self.x = love.graphics.getWidth()/2 - self.width/2
     self.y = love.graphics.getHeight()/2 - self.height/2
+
+    self:positionButtons()
 end
 
 function pause:update(dt)
+    -- if the screen resolution changed, the menu needs to be repositioned
+    if (love.graphics.getWidth() ~= self.x*2 + self.width) or (love.graphics.getHeight() ~= self.y*2 + self.height) then
+        self.x = love.graphics.getWidth()/2 - self.width/2
+        self.y = love.graphics.getHeight()/2 - self.height/2
 
+        self:positionButtons()
+    end
 end
 
 function pause:keypressed(key, code)
