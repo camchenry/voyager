@@ -57,7 +57,6 @@ function menu:mousepressed(x, y, mbutton)
 end
 
 function menu:draw()
-
     love.graphics.setFont(fontBold[40])
     love.graphics.print('VOYAGER', 25, 25)
 

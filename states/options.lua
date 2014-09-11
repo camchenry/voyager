@@ -7,7 +7,7 @@ end
 function options:enter()
 	local width, height, flags = love.window.getMode()
 	
-    self.vsync = Checkbox:new('VSYNC', 25, 50)
+    self.vsync = Checkbox:new('VERTICAL SYNC', 25, 50)
 	self.vsync.selected = flags.vsync
 	
 	self.fullscreen = Checkbox:new('FULLSCREEN', 25, 90)
@@ -24,19 +24,20 @@ function options:enter()
 			table.insert(resolutions, {res.width, res.height})
 		end
 	end
+
+	-- sort resolutions from smallest to biggest
+	table.sort(resolutions, function(a, b) return a[1]*a[2] < b[1]*b[2] end)
 	
-	self.resolution = List:new('RESOLUTION', resolutions, 25, 170)
+	self.resolution = List:new('RESOLUTION: ', resolutions, 25, 170, 275)
 	self.resolution.listType = 'resolution'
 	self.resolution:selectTable({width, height})
-	self.resolution:setText('val1 x val2')
+	self.resolution:setText('{1}x{2}')
 	
 	
-	local fsaaOptions = {0, 2, 4, 8, 16, 32}
-	self.fsaa = List:new('ANTIALIASING', fsaaOptions, 25, 210)
+	local fsaaOptions = {0, 2, 4, 8, 16}
+	self.fsaa = List:new('ANTIALIASING: ', fsaaOptions, 25, 210, 275)
 	self.fsaa:selectValue(flags.fsaa)
-	self.fsaa:setText('valx')
-	
-	
+	self.fsaa:setText('{}x')
 	
 	-- applies current config settings
 	self.back = Button:new("BACK", 25, love.window.getHeight()-80)
@@ -44,13 +45,19 @@ function options:enter()
 		state.pop() -- options can be accessed from multiple places in the game
 	end
 
-	self.apply = Button:new('APPLY', 125, love.window.getHeight()-80)
+	self.apply = Button:new('APPLY', 135, love.window.getHeight()-80)
 	self.apply.activated = function ()
-		self:applyChanges()
-		
+		if self:applyChanges() then
+			fx.text(3.5, "CHANGES APPLIED", 25, love.graphics.getHeight()-120, {127, 127, 127})
+		end
+
 		self.back.y = love.window.getHeight()-80
 		self.apply.y = love.window.getHeight()-80
 	end
+end
+
+function options:leave()
+	fx.reset()
 end
 
 function options:applyChanges()
@@ -63,7 +70,7 @@ function options:applyChanges()
 	local fullscreen = self.fullscreen.selected
 	local borderless = self.borderless.selected
 	
-	love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
+	local success = love.window.setMode(width, height, {vsync = vsync, fullscreen = fullscreen, borderless = borderless, fsaa = fsaa})
 	
 	
 	local width, height, flags = love.window.getMode()
@@ -73,6 +80,8 @@ function options:applyChanges()
 	end
 	
 	self:save(width, height, vsync, fullscreen, borderless, fsaa)
+
+	return success
 end
 
 function options:mousepressed(x, y, button)
@@ -90,7 +99,9 @@ function options:mousepressed(x, y, button)
 end
 
 function options:keypressed(key)
-	
+	if key == "escape" then
+		state.pop()
+	end
 end
 
 function options:draw()

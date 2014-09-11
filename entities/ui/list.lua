@@ -1,22 +1,24 @@
 List = class('List')
 
-function List:initialize(prefix, options, x, y, w, h)
+function List:initialize(label, options, x, y, w, h)
 	self.x = x
 	self.y = y
 
 	self.font = font[22]
 	
-	self.prefix = prefix..':  ' -- extra space for leftButton
+	self.label = label
 	self.text = ''
 	self.options = options
 	self.selected = 1
+
+	self.margin = 5
 	
 	self.longestIndex = self:setLongestIndex() -- arrows 
 	
-	self.width = w or self.font:getWidth(self.prefix..self.text)
+	self.width = w 
 	self.height = h or self.font:getHeight()
 
-	self.leftButton = Button:new("<", self.x+self.font:getWidth(self.prefix), self.y, nil, nil, fontBold[22])
+	self.leftButton = Button:new("<", self.x, self.y, nil, nil, fontBold[22])
 	self.leftButton.activated = function()
 		self:prev()
 	end
@@ -27,16 +29,15 @@ function List:initialize(prefix, options, x, y, w, h)
 end
 
 function List:draw()
-	self.rightButton.x = self.x+self.width+self.leftButton.width
-
 	love.graphics.setFont(self.font)
 
+	self.rightButton.x = self.x + self.width
+	self.leftButton.x = self.rightButton.x - love.graphics.getFont():getWidth(self.text) - self.leftButton.font:getWidth(self.leftButton.text) - self.margin*2
+
 	love.graphics.setColor(255, 255, 255)
-	--love.graphics.rectangle('fill', self.x+self.leftButton.width+5, self.y, self.width, self.height)
-	
-	--love.graphics.setColor(0, 0, 0)
-	
-	love.graphics.print(self.prefix..self.text, self.x, self.y)
+	love.graphics.print(self.text, self.rightButton.x - love.graphics.getFont():getWidth(self.text) - self.margin, self.y)
+
+	love.graphics.print(self.label, self.x, self.y)
 
 	self.leftButton:draw()
 	self.rightButton:draw()
@@ -90,32 +91,32 @@ end
 
 -- Sets how options are displayed. ex: for resolution, 'val1 x val2', or for antialiasing, 'valx'
 function List:setText(text)
-	if not text then text = self.originalText -- if no text given then use the stored value
-	else text = '    '..text end -- extra space for leftButton that is not taken into account for its value (to center it)
-	
+	-- if no text given then use the stored value
+	if not text then text = self.originalText end
+
 	self.originalText = text
 	local longestText = self.originalText
 
 	-- Use val for simple numbered options
-	if string.find(text, 'val') then
-		text = string.gsub(text, 'val', self.options[self.selected]) 
-		longestText = string.gsub(longestText, 'val', self.options[self.longestIndex])
+	if text:find('{}') then
+		text = text:gsub('{}', self.options[self.selected]) 
+		longestText = longestText:gsub('{}', self.options[self.longestIndex])
 	end
 
 	-- Use val1, 2 etc for table options
-	if string.find(text, 'val1') then
-		text = string.gsub(text, 'val1', self.options[self.selected][1])
-		longestText = string.gsub(longestText, 'val1', self.options[self.longestIndex][1])
+	if text:find('{1}') then
+		text = text:gsub('{1}', self.options[self.selected][1])
+		longestText = longestText:gsub('{1}', self.options[self.longestIndex][1])
 	end
 	
-	if string.find(text, 'val2') then
-		text = string.gsub(text, 'val2', self.options[self.selected][2])
-		longestText = string.gsub(longestText, 'val2', self.options[self.longestIndex][2])
+	if text:find('{2}') then
+		text = text:gsub('{2}', self.options[self.selected][2])
+		longestText = longestText:gsub('{2}', self.options[self.longestIndex][2])
 	end
 	
 	self.text = text
-	self.width = w or self.longestIndex and self.font:getWidth(self.prefix..longestText)  -- sets width to that of the longest possible width of all options in list
-		or self.font:getWidth(self.prefix..self.text)
+	--self.width = w or self.longestIndex and self.font:getWidth(longestText)  -- sets width to that of the longest possible width of all options in list
+		--or self.font:getWidth(self.text)
 end
 
 

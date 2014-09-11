@@ -47,6 +47,12 @@ fx.transition = function(t, to, ...)
 end
 
 fx.text = function(delay, text, x, y, color, typeface, easing, callback, ...)
+    if fx._textWait ~= nil then
+        tween.reset(fx._textWait)
+        fx._textAlpha = 0
+        fx._text = nil
+    end
+
     fx._text = text
     fx._textFont = typeface or font[28]
     fx._textColor = color or {255, 255, 255}
@@ -54,7 +60,7 @@ fx.text = function(delay, text, x, y, color, typeface, easing, callback, ...)
     fx._textY = y or 0
     fx._textAlpha = 255
 
-    wait(delay, function(...)
+    fx._textWait = wait(delay, function(...)
         fx._textAlpha = 0
     end, ...)
 end
