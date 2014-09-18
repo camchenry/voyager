@@ -15,7 +15,6 @@ function start:enter()
 
     self.pilotGender = nil
 
-
     self.pilotMale = Checkbox:new("MALE", 25, 300, nil, nil, font[28])
     self.pilotMale.activated = function() 
         self.pilotGender = "male"
@@ -92,6 +91,11 @@ end
 function start:keypressed(key, isrepeat)
     self.pilotFirstInput:keypressed(key, isrepeat)
     self.pilotLastInput:keypressed(key, isrepeat)
+
+    if (key == "enter" or key == "tab") and not isrepeat then
+        self.pilotFirstInput.selected = not self.pilotFirstInput.selected 
+        self.pilotLastInput.selected = not self.pilotLastInput.selected
+    end
 end
 
 function start:mousepressed(x, y, mbutton)

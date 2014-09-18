@@ -40,12 +40,12 @@ function options:enter()
 	self.fsaa:setText('{}x')
 	
 	-- applies current config settings
-	self.back = Button:new("BACK", 25, love.window.getHeight()-80)
+	self.back = Button:new("< BACK", 25, love.window.getHeight()-80)
 	self.back.activated = function()
 		state.pop() -- options can be accessed from multiple places in the game
 	end
 
-	self.apply = Button:new('APPLY', 135, love.window.getHeight()-80)
+	self.apply = Button:new('APPLY', 170, love.window.getHeight()-80)
 	self.apply.activated = function ()
 		if self:applyChanges() then
 			fx.text(3.5, "CHANGES APPLIED", 25, love.graphics.getHeight()-120, {127, 127, 127})

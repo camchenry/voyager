@@ -38,7 +38,9 @@ function landed:update(dt)
 end
 
 function landed:keypressed(key, isrepeat)
-
+    if key == "escape" then
+        state.push(pause)
+    end
 end
 
 function landed:mousepressed(x, y, mbutton)

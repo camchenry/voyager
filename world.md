@@ -1,7 +1,7 @@
 Timeline
 ========
 
-- 1.1.2500 Present day
+- 1.1.2517 Present day
 - 4.10.2269 First successful test of a FTL drive
 - 0.0.2123 The Blackwell Corporation Founded
 - 0.0.2096 Mars terraforming started
@@ -14,7 +14,7 @@ Factions
     - Human splinter group, pro-human, hates other races
     - Advocates of human genetic modification, which is illegal in the federation
     - Operates in neutral space, away from Federation territory
-- Galactic Shipping (GS)
+- Galactic Trade union (GS)
     - Neutral
     - Ships all interstellar cargo
     - Based on Luna (the Moon)
