@@ -52,7 +52,7 @@ end
 function bbs:setup()
 	self.sidebarItems = {}
 	for i, option in ipairs(self.options) do
-		local button = sidebarButton:new(option.name, self.x, self.y+self.itemHeight*(i-1), self.itemWidth, self.itemHeight)
+		local button = sidebarButton:new(option.name, self.x, self.y+self.itemHeight*(i-1), self.itemWidth, self.itemHeight, font[18])
 		button.bg = {127, 127, 127}
 		
 		button.activated = function ()

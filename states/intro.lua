@@ -10,32 +10,45 @@ function intro:enter()
     fx.flash(0.5, {0, 0, 0})
 
     self.currentSequence = 1
+    self.switching = false
 
-    for i, seq in pairs(self.sequences) do
-        wait(i*25, function() self.currentSequence = self.currentSequence + 1 end)
+    self.continue = Button:new("Continue >", 100, love.graphics.getHeight()-100)
+    self.continue.activated = function()
+        self.currentSequence = self.currentSequence + 1
     end
 end
 
 function intro:update(dt)
+    if self.switching then return end
+
     if self.currentSequence > #self.sequences then
-        fx.reset()
-        state.switch(start)
+        self.currentSequence = #self.sequences
+        fx.fade(0.75, {0, 0, 0}, nil, state.switch, start)
+        self.switching = true
     end
 end
 
 function intro:keypressed(key, isrepeat)
+    if self.switching then return end
+
     if key == "escape" or key == "enter" then
         self.currentSequence = self.currentSequence + 1
     end
 end
 
 function intro:mousepressed(x, y, mbutton)
-    self.currentSequence = self.currentSequence + 1
+    if self.switching then return end
+
+    self.continue:mousepressed(x, y, mbutton)
 end
 
 function intro:draw()
     local limit = math.min(1080, love.graphics.getWidth()-200)
     love.graphics.printf(self.sequences[self.currentSequence], 100, 100, limit, "left")
+
+    if not self.switching then
+        self.continue:draw()
+    end
 
     fx.draw()
 end

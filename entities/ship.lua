@@ -37,8 +37,8 @@ function Ship:initialize(world, controlScheme)
     self.mass = 3
     self.torque = 450*m
     self.angularDamping = 15
-    self.inertia = 11 -- more inertia = more resistance to force
-    self.speed = 150
+    self.inertia = 13 -- more inertia = more resistance to force
+    self.speed = 200
     self.maxSpeed = 250
     self.maxForce = 150*m
 
@@ -57,7 +57,7 @@ function Ship:initialize(world, controlScheme)
     self.faction = "Federation"
 
     -- ship combat properties
-    self.maxHull = 1000000
+    self.maxHull = 1000
     self.hull = self.maxHull
 
     self.jumping = false
