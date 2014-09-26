@@ -176,7 +176,7 @@ function starmap:update(dt)
 end
 
 function starmap:keypressed(key, isrepeat)
-    if key == "m" then
+    if key == "m" or key == "escape" then
         state.pop()
     end
 end
@@ -243,9 +243,9 @@ function starmap:hoverInfo(system)
     local missions = game.missionController:getMissionsInSystem(system)
 
     if #missions > 0 then
-        love.graphics.print("MISSIONS", x+17, my+25)
-
         local my = y + (#objects+1)*20
+        
+        love.graphics.print("MISSIONS", x+17, my+25)
     
         for k, mission in pairs(game.missionController:getMissionsInSystem(system)) do 
             love.graphics.print('- '..mission.name, x+25, my+(k*25)+30)

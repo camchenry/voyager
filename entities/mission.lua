@@ -21,7 +21,6 @@ function MissionController:acceptMission(mission)
 	local canAccept, problem = self:canAcceptMission(mission)
 
 	if canAccept then
-		mission.accepted = true
 		table.insert(self.missions, mission)
 	end
 

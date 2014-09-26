@@ -1,5 +1,4 @@
 -- entities
-require 'entities.ui.bbs'
 require 'entities.ui.button'
 require 'entities.ui.checkbox'
 require 'entities.ui.input'
