@@ -10,6 +10,10 @@ require 'entities.control.computer'
 
 require 'entities.hud.radar'
 require 'entities.hud.navigation'
+require 'entities.hud.hull'
+require 'entities.hud.speed'
+
+require 'entities.effects.background'
 
 require 'entities.hud'
 require 'entities.pilot'

@@ -20,15 +20,4 @@ function PlayerControl:update(dt)
     if love.keyboard.isDown(" ") then
         self.ship.weapon:fire(self.ship, {x=love.mouse.getX(), y=love.mouse.getY()})
     end
-
-    -- Automatically selects a planet if the ship is over it
-    game.selectedObject = nil
-    local x, y = self.ship.body:getPosition()
-    
-    for k, planet in pairs(the.system.objects) do
-        if x >= planet.x - planet.radius - 10 and x <= planet.x + planet.radius + 10 and y >= planet.y - planet.radius - 10 and y <= planet.y + planet.radius + 10 then
-            game.selectedObject = planet
-            break
-        end
-    end
 end

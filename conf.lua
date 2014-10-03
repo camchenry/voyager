@@ -33,6 +33,8 @@ function love.conf(t)
 end
 
 config = {
+    debug = false,
+
     gameTitle = "Voyager",
     windowTitle = "Voyager",
     windowIcon = 'img/customIcon.png',

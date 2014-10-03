@@ -120,15 +120,6 @@ fx.draw = function()
         love.graphics.setColor(color)
         love.graphics.setFont(font)
     end
-
-    if config.debug then
-        local oldFont = love.graphics.getFont()
-        love.graphics.setFont(font[16])
-        local mouseX, mouseY = love.mouse.getPosition()
-        love.graphics.print("FPS: "..love.timer.getFPS(), 5, 5)
-        --love.graphics.print("Mouse: "..mouseX..", "..mouseY, 5, 45)
-        love.graphics.setFont(oldFont)
-    end
 end
 
 return fx

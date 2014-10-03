@@ -37,8 +37,8 @@ function Ship:initialize(world, controlScheme)
     self.mass = 3
     self.torque = 450*m
     self.angularDamping = 15
-    self.inertia = 13 -- more inertia = more resistance to force
-    self.speed = 200
+    self.inertia = 10 -- more inertia = more resistance to force
+    self.speed = 250
     self.maxSpeed = 250
     self.maxForce = 150*m
 
@@ -77,8 +77,8 @@ function Ship:update(dt)
     self.weapon:update(dt)
 
     if not self.jumping then 
-        self.controlScheme:update(dt)
         self:limitSpeed()
+        self.controlScheme:update(dt)
     elseif self.jumping and self.engagingJump then
         self:turnToward(starmap:angleTo(starmap.selectedSystem))
     elseif self.jumping and not self.engagingJump then
@@ -165,6 +165,12 @@ function Ship:limitSpeed()
     velocity = velocity:limit(self.maxSpeed)
 
     self.body:setLinearVelocity(velocity.x, velocity.y)
+end
+
+-- returns magnitude of velocity vector (which is the speed)
+function Ship:getSpeed()
+    local vx, vy = self.body:getLinearVelocity()
+    return math.sqrt(vx^2 + vy^2)
 end
 
 function Ship:thrustPrograde()
@@ -258,7 +264,9 @@ function Ship:draw()
 
     love.graphics.draw(self.testShipImage, self.body:getX() , self.body:getY(), self.body:getAngle()+math.pi/2, self.scaleX, self.scaleY, self.testShipImage:getWidth()/2, self.testShipImage:getHeight()/2)
 
-    if self.controlScheme.predictionVector ~= nil then
-        love.graphics.circle("line", self.controlScheme.predictionVector.x, self.controlScheme.predictionVector.y, 8)
+    if config.debug then
+        if self.controlScheme.predictionVector ~= nil then
+            love.graphics.circle("line", self.controlScheme.predictionVector.x, self.controlScheme.predictionVector.y, 8)
+        end
     end
 end

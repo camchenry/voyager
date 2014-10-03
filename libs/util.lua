@@ -151,3 +151,49 @@ function table.random(t, associative)
       return key, t[key]
   end
 end
+
+-- see: https://love2d.org/forums/viewtopic.php?f=4&p=65969
+function drawArc (x, y, r, s_ang, e_ang, numLines)
+   numLines = numLines or 150
+   local step = ((math.pi * 2) / numLines)
+   local cos, sin, line = math.cos, math.sin, love.graphics.line
+
+   local ang1 = s_ang
+   local ang2 = 0
+   
+   while (ang1 < e_ang) do
+      -- increment angle
+      ang2 = ang1 + step
+
+      -- draw a line from 'previous' angle to 'actual' angle
+      line(x + (cos(ang1) * r), y - (sin(ang1) * r),
+                         x + (cos(ang2) * r), y - (sin(ang2) * r))
+      
+                -- update 'previous' angle
+      ang1 = ang2
+   end
+
+end
+
+local stencilCache = {}
+function filled_arc(cx, cy, radius, start, stop, segments)
+    local stencil = nil
+
+    if stencilCache[radius-love.graphics.getLineWidth()] == nil then
+        stencil = function()
+            love.graphics.circle('fill', 0, 0, radius-love.graphics.getLineWidth(), 64)
+        end
+
+        stencilCache[radius-love.graphics.getLineWidth()] = stencil
+    else
+        stencil = stencilCache[radius-love.graphics.getLineWidth()]
+    end
+
+    love.graphics.push()
+    love.graphics.translate(cx, cy)
+    love.graphics.setInvertedStencil(stencil)
+    love.graphics.scale(1, -1)
+    love.graphics.arc('fill', 0, 0, radius, start, stop, segments)
+    love.graphics.pop()
+    love.graphics.setInvertedStencil(nil)
+end

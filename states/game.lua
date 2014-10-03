@@ -3,18 +3,29 @@ game = {}
 function game:init()
 	self.missionController = MissionController:new()
 
-    self.HUD = HUD:new()
-    self.navigation = Navigation:new()
-    self.HUD:addWidget(self.navigation)
-    self.radar = Radar:new()
-    self.HUD:addWidget(self.radar)
-
     -- by setting the game up with a reset, it ensures that resetting will 
     -- take the game back to the original state
     self:reset()
+
+    MOUSE_VALUE = 0
+    MOUSE_SCALE = 0.01
 end
 
 function game:reset()
+    self.HUD = HUD:new()
+
+    self.hullDisplay = HullDisplay:new()
+    self.HUD:addWidget(self.hullDisplay)
+
+    self.navigation = Navigation:new()
+    self.HUD:addWidget(self.navigation)
+
+    self.speedDisplay = SpeedDisplay:new()
+    self.HUD:addWidget(self.speedDisplay)
+
+    self.radar = Radar:new()
+    self.HUD:addWidget(self.radar)
+
     self.collision = Collision:new()
     assert(self.collision ~= nil)
     assert(Collision ~= nil)
@@ -25,24 +36,12 @@ function game:reset()
         the.economy:update()
     end
 
-    self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
-    self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
-    self.starImages = {}
-    for i = 1, 2 do
-        self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
-        self.starImages[i]:setWrap('repeat')
-    end
+    self.starBackground = StarBackground:new()
 end
 
 -- reset specifically for pause menu, because the screen resolution can change
 function game:pauseReset()
-    self.starQuad = love.graphics.newQuad(0, 0, love.window.getWidth()*2, love.window.getHeight()*2, 512, 512)
-    self.nebulaQuad = love.graphics.newQuad(0, 0, love.window.getWidth(), love.window.getHeight(), love.window.getWidth(), love.window.getHeight())
-    self.starImages = {}
-    for i = 1, 2 do
-        self.starImages[i] = love.graphics.newImage('img/starField'..i..'.png')
-        self.starImages[i]:setWrap('repeat')
-    end
+    self.starBackground = StarBackground:new()
 
     if not the.player.ship.destroyed then
         self.translateX = -the.player.ship.body:getX() + love.window.getWidth()/2
@@ -105,7 +104,7 @@ function game:update(dt)
 
     if the.player.ship.jumping then
         if the.player.ship.engagingJump then
-            self.navigation:setText("ENGAGING HYPERJUMP DRIVE", "T-"..round(the.player.ship.jumpCountdown, 2))
+            self.navigation:setText("ENGAGING HYPERJUMP DRIVE", "T-"..round(the.player.ship.jumpCountdown, 1))
         else
             self.navigation:setText("EXECUTING HYPERJUMP")
         end
@@ -115,7 +114,7 @@ function game:update(dt)
     elseif starmap.selectedSystem ~= nil then
         self.navigation:setText('HYPERJUMP DESTINATION: '..string.upper(starmap.selectedSystem), 'PRESS (J) TO JUMP')
     else
-        self.navigation:setText('LOCATION: '..string.upper(the.system.name))
+        self.navigation:setText("", "")
     end
 
     self.HUD:update(dt)
@@ -128,7 +127,6 @@ function game:keypressed(key, isrepeat)
     if not the.player.ship.destroyed then
         the.player.ship:keypressed(key, isrepeat)
     end
-    love.keyboard.setKeyRepeat(false)
 
     if not the.player.ship.jumping then
         if key == "m" then
@@ -149,7 +147,7 @@ function game:keypressed(key, isrepeat)
     				state.switch(landed)
     			end
             else
-                self.selectedObject = the.system:closestObject(the.player.ship.body:getX()-self.translateX, the.player.ship.body:getY()-self.translateY)
+                self.selectedObject = the.system:closestObject(the.player.ship.body:getX(), the.player.ship.body:getY(), 200)
             end
         end
     end
@@ -161,45 +159,33 @@ function game:keypressed(key, isrepeat)
             state.push(pause)
         end
     end
-
-
 end
 
 function game:mousepressed(x, y, button)
     if button == "l" then
         self.selectedObject = the.system:closestObject(x-self.translateX, y-self.translateY)
     end
+
+    if button == "wu" then
+        MOUSE_VALUE = MOUSE_VALUE + MOUSE_SCALE
+    elseif button == "wd" then
+        MOUSE_VALUE = MOUSE_VALUE - MOUSE_SCALE
+    end
 end
 
 function game:draw()
     love.graphics.setColor(255, 255, 255)
-	local x, y = 0, 0
-	
-	for i = 1, #self.starImages do
-		if the.player.ship and not the.player.ship.destroyed then
-			x, y = the.player.ship.body:getPosition()
-			
-			local divisor = (#self.starImages+1-i)*15
-			x, y = math.floor(x/divisor), math.floor(y/divisor)
-			local w, h = self.starImages[i]:getDimensions()
-			x = x % w
-			y = y % h
-		end
-		if i > 1 then
-			love.graphics.draw(self.starImages[i], self.starQuad, -x, -y)
-		else
-			love.graphics.draw(self.starImages[i], self.nebulaQuad, 0, 0)
-		end
-	end
-	
-    love.graphics.translate(math.floor(self.translateX), math.floor(self.translateY))
-    -- things that should be translated
 
-    love.graphics.setColor(255, 255, 255)
+    self.starBackground:draw()
+	
+    -- things that should be translated
+    love.graphics.translate(math.floor(self.translateX), math.floor(self.translateY))
+
     -- selected object display
     if self.selectedObject ~= nil then
         local obj = self.selectedObject
 
+        love.graphics.setColor(255, 255, 255, 127)
         love.graphics.rectangle("line", obj.x-obj.width/2-10, obj.y-obj.height/2-10, obj.width+20, obj.height+20)
     end
 
@@ -221,25 +207,12 @@ function game:draw()
     fx.draw()
 
     self.HUD:draw()
-
-    love.graphics.setLineWidth(1)
-    love.graphics.setFont(font[18])
-
-    local ratio = the.player.ship.hull / the.player.ship.maxHull
-
-    love.graphics.setColor(127, 127, 127, 33)
-    love.graphics.rectangle("fill", love.window.getWidth()/2-250, love.window.getHeight()-55, 250*2, 20)
-    love.graphics.setColor(255, 66, 33, 127)
-    love.graphics.rectangle("fill", love.window.getWidth()/2-250, love.window.getHeight()-55, 250*2*ratio, 20)
-
-
-    love.graphics.setColor(255, 255, 255)
-    local text = the.player.ship.hull .. ' / ' .. the.player.ship.maxHull
-    love.graphics.print(text, love.window.getWidth()/2-love.graphics.getFont():getWidth(text)/2, love.window.getHeight()-60)
-
-	
-    love.graphics.setFont(font[18])
-	love.graphics.setColor(255, 255, 255)
-	love.graphics.print(love.timer.getFPS(), 0, 0)
-    love.graphics.print(dump(the.player.alignment), 0, 40)
+    
+    if config.debug then
+        love.graphics.setFont(font[18])
+	    love.graphics.setColor(255, 255, 255)
+	    love.graphics.print(love.timer.getFPS(), 0, 0)
+        love.graphics.print(MOUSE_VALUE, 0, 20)
+        love.graphics.print(dump(the.player.alignment), 0, 40)
+    end
 end
