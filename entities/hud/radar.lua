@@ -80,6 +80,18 @@ function Radar:draw()
 			local radarX, radarY = self:findLocal(x, y, entX, entY, iconRadius)
 			
             love.graphics.circle("fill", radarX+game.translateX, radarY+game.translateY, iconRadius)
+
+            for i, mission in pairs(game.missionController:getActiveMissions()) do
+                if mission:isInstanceOf(BountyMission) and mission.target == entity then
+                    love.graphics.push()
+                    love.graphics.translate(game.translateX, game.translateY)
+                    love.graphics.setColor(240, 35, 17, 225)
+                    love.graphics.polygon("fill", radarX-7, radarY-35, radarX+7, radarY-35, radarX, radarY-20)
+                    love.graphics.pop()
+                    love.graphics.setColor(255, 255, 255)
+                    break
+                end
+            end
 		end
     end
 

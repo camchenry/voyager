@@ -44,7 +44,7 @@ function StarSystem:load(name)
 
     -- purge all physics objects, except the player ship
     for i, body in pairs(self.world:getBodyList()) do
-        if body ~= the.player.ship.body then
+        if body ~= the.player.ship.body and self:isActiveBody(body) then
             body:destroy()
         end
     end
@@ -64,6 +64,14 @@ function StarSystem:load(name)
         self:addObject(newObject)
     end
 
+    -- add mission ships
+    for i, mission in pairs(game.missionController:getActiveMissions()) do
+        if mission:isInstanceOf(BountyMission) and mission.destinationSystem == self.name then
+            mission.target.body:setPosition(math.random(-1000, 1000)-200, math.random(-1000, 1000)+200)
+            self:addEntity(mission.target)
+        end
+    end
+
     -- worked fine
     return true
 end
@@ -71,8 +79,8 @@ end
 function StarSystem:entered()
     the.economy:update()
 
-    local ship = the.system:addEntity(Ship:new())
-    ship.body:setPosition(math.random(-1000, 1000)-200, math.random(-1000, 1000)+200)
+    --local ship = the.system:addEntity(Ship:new())
+    --ship.body:setPosition(math.random(-1000, 1000)-200, math.random(-1000, 1000)+200)
 end
 
 -- finds closest object to x, y within radius
@@ -90,6 +98,14 @@ function StarSystem:closestObject(x, y, radius)
     end
 
     return obj, min
+end
+
+function StarSystem:isActiveBody(body)
+    for k, obj in pairs(self.entities) do
+        if obj.body == body then
+            return true
+        end
+    end
 end
 
 function StarSystem:hasPlanet(planet)

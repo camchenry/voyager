@@ -144,6 +144,7 @@ function game:keypressed(key, isrepeat)
     				the.player.planet = self.selectedObject
     				the.player.ship:stop()
     				self.selectedObject = nil
+                    game.missionController:update()
     				state.switch(landed)
     			end
             else

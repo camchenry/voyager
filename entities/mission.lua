@@ -8,11 +8,16 @@ MissionController.static.PROBLEM_MESSAGES = {
 
 function MissionController:initialize()
 	self.missions = {}
+	self.availableMissions = {}
 end
 
 -- returns list of accepted missions that haven't been completed yet
 function MissionController:getActiveMissions()
 	return self.missions
+end
+
+function MissionController:getAvailableMissions()
+	return self.availableMissions
 end
 
 -- tries to accept a mission
@@ -49,7 +54,7 @@ function MissionController:checkCompletion()
 			the.player.credits = the.player.credits + mission.pay
 			the.player.ship.maxCargo = the.player.ship.maxCargo + 1 -- restores cargo space
 			self.missions[i] = nil
-			fx.text(3, 'Completed Mission: Delivery to '..the.player.planet.name..'\nPayment: '..mission.pay..'c', 5, 5, {255, 0, 0}) 
+			fx.text(3, 'Completed Mission:'..mission.name..'\nPayment: '..mission.pay..'c', 5, 350, {255, 0, 0}) 
 		end
 	end
 end
@@ -62,14 +67,23 @@ function MissionController:generateMissions(currentPlanet)
 	for i=1, missionNum do
 		local planet, system = starmap:getRandomPlanet()
 
+		-- mission destination can't be the current system/planet
 		while planet == the.player.planet or system == the.player.location do
 			planet, system = starmap:getRandomPlanet()
 		end
 
-		table.insert(missions, Mission:new(currentPlanet, planet, system))
+		if math.random() > 0.5 then
+			table.insert(missions, Mission:new(currentPlanet, planet, system))
+		else
+			table.insert(missions, BountyMission:new(system))
+		end
 	end
 	
 	return missions
+end
+
+function MissionController:update()
+	self.availableMissions = self:generateMissions(the.player.planet.name)
 end
 
 -- returns a list of Missions that have destinations in a specific system
@@ -78,12 +92,9 @@ function MissionController:getMissionsInSystem(system)
 
 	-- loop through all missions
     for k, mission in pairs(self.missions) do 
-    	-- loop through all system objects
-    	for k, obj in pairs(starmap.rawSystemData[system].objects) do
-    		-- check to see if a mission matches up with one of the planets
-    		if mission.destination == obj.data.name then
-    			table.insert(missions, mission)
-    		end
+    	-- only add missions with destinations in the system specified
+    	if mission.destinationSystem == system then
+    		table.insert(missions, mission)
     	end
     end
 
@@ -106,4 +117,19 @@ end
 
 function Mission:isComplete()
 	return self.destination == the.player.planet.name
+end
+
+BountyMission = class('BountyMission')
+function BountyMission:initialize(destinationSystem)
+	self.name = "Bounty"
+	self.description = "Kill a wanted pilot that is currently hiding in the "..destinationSystem.." system."
+
+	self.pay = 100
+
+	self.destinationSystem = destinationSystem
+	self.target = Ship:new()
+end
+
+function BountyMission:isComplete()
+	return self.target.destroyed
 end

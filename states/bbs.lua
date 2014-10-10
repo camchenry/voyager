@@ -2,8 +2,6 @@ bbs = {}
 
 function bbs:init()
 	self.leaveButton = Button:new("< LEAVE", 25, love.window.getHeight()-80, nil, nil, font[32], function() state.switch(landed) end)
-
-	self.options = game.missionController:generateMissions(the.player.planet.name)
 	
 	self.width = love.window.getWidth() - 50
 	self.height = love.window.getHeight() - 200
@@ -50,6 +48,8 @@ function bbs:acceptActiveMission()
 end
 
 function bbs:setup()
+	self.options = game.missionController:getAvailableMissions()
+	
 	self.sidebarItems = {}
 	for i, option in ipairs(self.options) do
 		local button = sidebarButton:new(option.name, self.x, self.y+self.itemHeight*(i-1), self.itemWidth, self.itemHeight, font[18])
